@@ -1,6 +1,7 @@
 <template>
   <MyHeader/>
   <NavigationBar/>
+  <router-view/>
 </template>
 
 <script>

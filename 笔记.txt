@@ -7,3 +7,8 @@
   <router-link to="/home">菜单名</router-link>
   <router-view/>
 
+2022/3/21
+1. 完成tab组件
+2. 当路由被触发时，会自动加上router-link-active的class，可自定义其css样式
+3. <router-view/>显示路由对应的组件
+
