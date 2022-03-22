@@ -7,6 +7,10 @@ import PageTopList from '@/views/PageTopList.vue'
 
 const routes = [
   {
+    path: '/',
+    redirect: '/recommend'
+  },
+  {
     path: '/recommend',
     component: PageRecommend
   },
