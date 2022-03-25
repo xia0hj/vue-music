@@ -45,8 +45,9 @@ const getByAxios = (url, params) => {
 }
 
 // 注册推荐列表接口路由
+// 当前端调用/api/getRecommend时，会执行以下逻辑
 const registerRecommend = (app) => {
-  app.get('/api/getRecommend', (request, response) => {
+  app.get('/api/getRecommend', (appRequest, appResponse) => {
     // 第三方服务接口 url
     const url = 'https://u.y.qq.com/cgi-bin/musics.fcg'
 
@@ -66,15 +67,13 @@ const registerRecommend = (app) => {
     // 计算签名值
     const sign = getSecuritySign(data)
 
-    //TODO 看到这里
-
     // 发送 get 请求
     getByAxios(url, {
       sign,
       '-': randomVal,
       data
-    }).then((response) => {
-      const data = response.data
+    }).then((axiosResponse) => {
+      const data = axiosResponse.data
       if (data.code === CODE_OK) {
         // 处理轮播图数据
         const focusList = data.focus.data.shelf.v_niche[0].v_card
@@ -117,16 +116,24 @@ const registerRecommend = (app) => {
         }
 
         // 往前端发送一个标准格式的响应数据，包括成功错误码和数据
-        res.json({
-          code: ERR_OK,
+        // 注意这个是app的response，之前搞错写成axios的response了
+        appResponse.json({
+          code: CODE_OK,
           result: {
             sliders,
             albums
           }
         })
       } else {
-        res.json(data)
+        appResponse.json(data)
       }
     })
   })
 }
+
+// 注册后端路由
+const registerRouter = (app) => {
+  registerRecommend(app)
+}
+
+module.exports = registerRouter
