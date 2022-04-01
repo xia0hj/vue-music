@@ -17,4 +17,10 @@
 2. Object.assign()
 3. JSON.stringify()
 
+2022/3/25
+1. async await
+2. vue created
+3. npm install --save @better-scroll/core
+4. npm install --save @better-scroll/slide
+
 
