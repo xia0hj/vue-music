@@ -1,4 +1,5 @@
 <template>
+  <!-- [Component] My Header -->
   <div class="header">
     <span class="icon" />
     <h1 class="text">Chicken Music</h1>

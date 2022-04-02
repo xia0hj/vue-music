@@ -1,4 +1,5 @@
 <template>
+  <!-- [Component] Navigation Bar -->
   <div class="tab">
     <router-link
       class="tab-item"

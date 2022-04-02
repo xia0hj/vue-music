@@ -1,6 +1,7 @@
 <template>
-  <div class="slider">
-    <div class="slider-group" ref="rootRef">
+  <!-- [Component] Base Slider -->
+  <div class="slider" ref="rootRef">
+    <div class="slider-group">
       <!-- 轮播图的集合 -->
       <div
         class="slider-page"
