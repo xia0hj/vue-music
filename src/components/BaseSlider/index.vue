@@ -27,7 +27,7 @@
 
 <script>
 import { ref } from 'vue'
-import useSlider from '@/composables/useSlider.js'
+import useSlider from './useSlider.js'
 
 export default {
   name: 'BaseSlider',

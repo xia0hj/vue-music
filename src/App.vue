@@ -1,15 +1,15 @@
 <template>
-  <my-header/>
+  <app-header/>
   <navigation-bar/>
   <router-view/>
 </template>
 
 <script>
-import MyHeader from '@/components/MyHeader.vue'
-import NavigationBar from '@/components/NavigationBar.vue'
+import AppHeader from '@/components/AppHeader'
+import NavigationBar from '@/components/NavigationBar'
 export default {
   components: {
-    'my-header': MyHeader,
+    'app-header': AppHeader,
     'navigation-bar': NavigationBar
   }
 }

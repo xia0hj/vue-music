@@ -1,7 +1,7 @@
 <template>
 
 <!-- [View] Page Recommend -->
-<div class="recommend">
+<div class="recommend" >
   <base-scroll class="recommend-content">
     <!-- better-scroll对第一个子div生效，所以用这个div包裹页面内容 -->
     <div>
@@ -40,8 +40,8 @@
 
 <script>
 import { getRecommend } from '@/service/recommend.js'
-import BaseSlider from '@/components/BaseSlider.vue'
-import BaseScroll from '@/components/BaseScroll.vue'
+import BaseSlider from '@/components/BaseSlider'
+import BaseScroll from '@/components/BaseScroll'
 
 export default {
   name: 'PageRecommend',

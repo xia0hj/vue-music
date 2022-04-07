@@ -117,13 +117,16 @@ const registerRecommend = (app) => {
 
         // 往前端发送一个标准格式的响应数据，包括成功错误码和数据
         // 注意这个是app的response，之前搞错写成axios的response了
-        appResponse.json({
-          code: CODE_OK,
-          result: {
-            sliders,
-            albums
-          }
-        })
+        // 延迟发送数据，测试loading
+        setTimeout(() => {
+          appResponse.json({
+            code: CODE_OK,
+            result: {
+              sliders,
+              albums
+            }
+          })
+        }, 1000)
       } else {
         appResponse.json(data)
       }
