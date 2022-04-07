@@ -65,8 +65,8 @@ export default {
   created: async function () {
     const result = await getRecommend()
     // 赋值给data
-    this.sliders = result.sliders
-    this.albums = result.albums
+    this.$data.sliders = result.sliders
+    this.$data.albums = result.albums
     console.log('page recommend get sliders data = ', result.sliders)
     console.log('page recommend get albums data = ', result.albums)
   }
