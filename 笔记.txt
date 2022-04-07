@@ -23,4 +23,7 @@
 3. npm install --save @better-scroll/core
 4. npm install --save @better-scroll/slide
 
+2022/4/7
+1. better-scroll上下滚动，会滚动srocll组件的第一个子div
+2. npm install vue3-lazy -S
 
