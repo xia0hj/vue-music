@@ -1,6 +1,6 @@
 <template>
-  <MyHeader/>
-  <NavigationBar/>
+  <my-header/>
+  <navigation-bar/>
   <router-view/>
 </template>
 
@@ -9,8 +9,8 @@ import MyHeader from '@/components/MyHeader.vue'
 import NavigationBar from '@/components/NavigationBar.vue'
 export default {
   components: {
-    MyHeader,
-    NavigationBar
+    'my-header': MyHeader,
+    'navigation-bar': NavigationBar
   }
 }
 </script>
