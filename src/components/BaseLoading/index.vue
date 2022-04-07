@@ -12,7 +12,7 @@ export default {
   name: 'loading',
   data () {
     return {
-      title: '正在载入...'
+      title: 'loading组件默认的title'
     }
   },
   methods: {

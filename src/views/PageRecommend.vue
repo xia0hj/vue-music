@@ -1,7 +1,7 @@
 <template>
 
 <!-- [View] Page Recommend -->
-<div class="recommend" v-loading="isLoading">
+<div class="recommend" v-loading:[loadingText]="isLoading">
   <base-scroll class="recommend-content">
     <!-- better-scroll对第一个子div生效，所以用这个div包裹页面内容 -->
     <div>
@@ -52,7 +52,8 @@ export default {
   data: function () {
     return {
       sliders: [], // 轮播图，item={id,pic,link}
-      albums: [] // 推荐歌单列表，item={id,pic,username,title}
+      albums: [], // 推荐歌单列表，item={id,pic,username,title}
+      loadingText: '正在载入...'
     }
   },
   computed: {
