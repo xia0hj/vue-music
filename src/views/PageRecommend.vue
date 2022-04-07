@@ -1,7 +1,7 @@
 <template>
 
 <!-- [View] Page Recommend -->
-<div class="recommend" >
+<div class="recommend" v-loading="isLoading">
   <base-scroll class="recommend-content">
     <!-- better-scroll对第一个子div生效，所以用这个div包裹页面内容 -->
     <div>
@@ -15,7 +15,7 @@
 
       <!-- recommend页面的歌单列表 -->
       <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
+        <h1 class="list-title" v-show="!isLoading">热门歌单推荐</h1>
         <ul>
           <li
             v-for="item in albums"
@@ -53,6 +53,12 @@ export default {
     return {
       sliders: [], // 轮播图，item={id,pic,link}
       albums: [] // 推荐歌单列表，item={id,pic,username,title}
+    }
+  },
+  computed: {
+    isLoading: function () {
+      // 当data中的sliders和albums数组均不存在时认为正在加载
+      return !this.$data.sliders.length && !this.$data.albums.length
     }
   },
   created: async function () {
