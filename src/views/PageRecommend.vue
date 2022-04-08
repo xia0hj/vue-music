@@ -2,14 +2,14 @@
 
 <!-- [View] Page Recommend -->
 <div class="recommend" v-loading:[loadingText]="isLoading">
-  <base-scroll class="recommend-content">
+  <BaseScroll class="recommend-content">
     <!-- better-scroll对第一个子div生效，所以用这个div包裹页面内容 -->
     <div>
 
       <!-- recommend页面的轮播图 -->
       <div class="slider-wrapper">
         <div class="slider-content">
-          <base-slider :sliders="sliders" v-if="sliders.length"/>
+          <BaseSlider :sliders="sliders" v-if="sliders.length"/>
         </div>
       </div>
 
@@ -33,7 +33,7 @@
         </ul>
       </div>
     </div>
-  </base-scroll>
+  </BaseScroll>
 </div>
 
 </template>
@@ -46,8 +46,8 @@ import BaseScroll from '@/components/BaseScroll'
 export default {
   name: 'PageRecommend',
   components: {
-    'base-slider': BaseSlider,
-    'base-scroll': BaseScroll
+    BaseSlider,
+    BaseScroll
   },
   data: function () {
     return {
