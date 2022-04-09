@@ -29,13 +29,11 @@ export default {
   components: {
     BaseScroll
   },
-  data: function () {
-    return {
-      data: {
-        type: Array,
-        default () {
-          return []
-        }
+  props: {
+    data: {
+      type: Array,
+      default () {
+        return []
       }
     }
   }
