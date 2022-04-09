@@ -19,6 +19,12 @@
         </ul>
       </li>
     </ul>
+
+    <!-- 滚动时固定在顶部的标题 -->
+    <div class="fixed">
+      <div class="fixed-title">顶部固定标题</div>
+    </div>
+
   </BaseScroll>
 </template>
 
@@ -42,7 +48,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/variable.scss";
-
 .index-list {
   position: relative;
   width: 100%;
@@ -73,6 +78,20 @@ export default {
         color: $color-text-l;
         font-size: $font-size-medium;
       }
+    }
+  }
+  .fixed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    .fixed-title {
+      height: 30px;
+      line-height: 30px;
+      padding-left: 20px;
+      font-size: $font-size-small;
+      color: $color-text-l;
+      background: $color-highlight-background;
     }
   }
 }

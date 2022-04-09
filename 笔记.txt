@@ -31,4 +31,6 @@
 2022/4/9
 1. 滚动组件有点问题，还没做完
 2. npm install --save @better-scroll/observe-dom
+3. 注意data和props的区别
+4. ctrl+~ vscode显示/隐藏终端
 
