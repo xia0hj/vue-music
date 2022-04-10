@@ -25,7 +25,7 @@
     </ul>
 
     <!-- 滚动时固定在顶部的标题 -->
-    <div class="fixed">
+    <div class="fixed" v-show="fixedTitle">
       <div class="fixed-title">{{fixedTitle}}</div>
     </div>
 
