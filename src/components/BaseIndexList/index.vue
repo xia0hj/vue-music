@@ -1,6 +1,10 @@
 <template>
-  <BaseScroll class="index-list">
-    <ul>
+  <BaseScroll
+    class="index-list"
+    v-bind:probeType="3"
+    v-on:callScroll="onScroll"
+  >
+    <ul ref="groupRef">
       <li
         v-for="group in data"
         v-bind:key="group.title"
@@ -22,7 +26,7 @@
 
     <!-- 滚动时固定在顶部的标题 -->
     <div class="fixed">
-      <div class="fixed-title">顶部固定标题</div>
+      <div class="fixed-title">{{fixedTitle}}</div>
     </div>
 
   </BaseScroll>
@@ -30,6 +34,7 @@
 
 <script>
 import BaseScroll from '@/components/BaseScroll'
+import useFixedTitle from './use-fixed-title'
 export default {
   name: 'BaseIndexList',
   components: {
@@ -41,6 +46,14 @@ export default {
       default () {
         return []
       }
+    }
+  },
+  setup: function (props) {
+    const { groupRef, onScroll, fixedTitle } = useFixedTitle(props)
+    return {
+      groupRef,
+      onScroll,
+      fixedTitle
     }
   }
 }

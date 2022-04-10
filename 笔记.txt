@@ -34,3 +34,7 @@
 3. 注意data和props的区别
 4. ctrl+~ vscode显示/隐藏终端
 
+2022/4/10
+1. use-fixed-title.js中的watch()踩坑了，要watch一个getter函数，或者是一个ref对象
+2. vue3 emit的用法：组件中声明emits数组，在setup中使用context.emit(声明的事件名, 携带的值)，然后在父组件中v-on:事件名="回调函数"，在回调函数中可获取事件携带的值
+
