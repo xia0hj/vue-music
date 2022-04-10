@@ -41,6 +41,10 @@ export default function useFixedTitle (props) {
   })
 
   const fixedTitle = computed(() => {
+    // 当在顶部还要继续往上拉时，不显示fixedTitle
+    if (scrollY.value < 0) {
+      return ''
+    }
     const currentGroup = props.data[currentListIndex.value]
     return currentGroup ? currentGroup.title : ''
   })
