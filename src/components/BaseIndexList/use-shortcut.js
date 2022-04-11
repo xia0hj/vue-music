@@ -34,6 +34,10 @@ export default function useShortcut (props, groupRef) {
   }
 
   function scrollTo (anchorIndex) {
+    // 有可能手指点到的不是锚点元素，导致event.target.dataset.itemindex是undefine，所以要判断如果是NaN则不进行滚动什么都不做
+    if (isNaN(anchorIndex)) {
+      return
+    }
     // 当触摸移动到侧边快捷栏以外的地方时，onShortcutTouchMove()算得的anchorIndexChange会很大导致index超出shortcutList，需要限制anchorIndex参数值的范围避免下标越界
     anchorIndex = Math.min(anchorIndex, shortcutList.value.length - 1)
     anchorIndex = Math.max(anchorIndex, 0)
