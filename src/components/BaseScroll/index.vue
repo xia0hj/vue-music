@@ -23,10 +23,10 @@ export default {
   emits: ['callScroll'], // 声明该组件会往外派发scroll事件
   setup: function (props, context) {
     const rootRef = ref(null)
-    const scroll = useScroll(rootRef, props, context.emit)
+    const scrollInstance = useScroll(rootRef, props, context.emit)
     return {
       rootRef,
-      scroll
+      scrollInstance // better-scroll的实例对象，放出来让其他组件能够通过scrollRef.value.scrollInstance获取
     }
   }
 }

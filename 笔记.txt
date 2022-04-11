@@ -39,3 +39,6 @@
 2. vue3 emit的用法：组件中声明emits数组，在setup中使用context.emit(声明的事件名, 携带的值)，然后在父组件中v-on:事件名="回调函数"，在回调函数中可获取事件携带的值
 3. 注意v-if和v-show的区别
 
+2022/4/11
+1. v-bind:data-变量名可将变量保存到DOM.dataset，触发事件时可通过event.target.dataset.变量名取出，注意data-前缀不可去掉
+2. 注意大坑：dataset变量名命名方式如果在vue template上写的是短横线连接式，则会自动转换成小驼峰式；如果template中写的是驼峰式，则会自动转换成全小写

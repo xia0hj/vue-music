@@ -3,6 +3,7 @@
     class="index-list"
     v-bind:probeType="3"
     v-on:callScroll="onScroll"
+    ref="scrollRef"
   >
     <ul ref="groupRef">
       <li
@@ -30,14 +31,21 @@
     </div>
 
     <!-- 侧边的快捷栏 -->
-    <div class="shortcut">
+    <div
+      class="shortcut"
+      @touchstart.stop.prevent="onShortcutTouchStart"
+      @touchmove.stop.prevent
+      @touchend.stop.prevent
+    >
       <ul>
         <li
           class="item"
           v-for="(item, index) in shortcutList"
           v-bind:key="item"
           v-bind:class="{'isCurrent': index===currentIndex}"
+          v-bind:data-ItemIndex="index"
         >
+        <!-- 使用v-bind:data-变量名将变量保存到DOM的dataset中，注意变量名是连字符会自动转换成小驼峰，如果是驼峰式会自动转换成全小写 -->
           {{item}}
         </li>
       </ul>
@@ -65,14 +73,16 @@ export default {
   },
   setup: function (props) {
     const { groupRef, onScroll, fixedTitle, fixedTitleStyle, currentIndex } = useFixedTitle(props)
-    const { shortcutList } = useShortcut(props)
+    const { shortcutList, onShortcutTouchStart, scrollRef } = useShortcut(props, groupRef)
     return {
       groupRef,
       onScroll,
       fixedTitle,
       fixedTitleStyle,
       currentIndex,
-      shortcutList
+      shortcutList,
+      onShortcutTouchStart,
+      scrollRef
     }
   }
 }
