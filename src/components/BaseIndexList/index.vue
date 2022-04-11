@@ -6,7 +6,7 @@
   >
     <ul ref="groupRef">
       <li
-        v-for="group in data"
+        v-for="group in listData"
         v-bind:key="group.title"
         class="group"
       >
@@ -29,19 +29,34 @@
       <div class="fixed-title">{{fixedTitle}}</div>
     </div>
 
+    <!-- 侧边的快捷栏 -->
+    <div class="shortcut">
+      <ul>
+        <li
+          class="item"
+          v-for="(item, index) in shortcutList"
+          v-bind:key="item"
+          v-bind:class="{'isCurrent': index===currentIndex}"
+        >
+          {{item}}
+        </li>
+      </ul>
+    </div>
+
   </BaseScroll>
 </template>
 
 <script>
 import BaseScroll from '@/components/BaseScroll'
 import useFixedTitle from './use-fixed-title'
+import useShortcut from './use-shortcut'
 export default {
   name: 'BaseIndexList',
   components: {
     BaseScroll
   },
   props: {
-    data: {
+    listData: {
       type: Array,
       default () {
         return []
@@ -49,12 +64,15 @@ export default {
     }
   },
   setup: function (props) {
-    const { groupRef, onScroll, fixedTitle, fixedTitleStyle } = useFixedTitle(props)
+    const { groupRef, onScroll, fixedTitle, fixedTitleStyle, currentIndex } = useFixedTitle(props)
+    const { shortcutList } = useShortcut(props)
     return {
       groupRef,
       onScroll,
       fixedTitle,
-      fixedTitleStyle
+      fixedTitleStyle,
+      currentIndex,
+      shortcutList
     }
   }
 }
@@ -106,6 +124,27 @@ export default {
       font-size: $font-size-small;
       color: $color-text-l;
       background: $color-highlight-background;
+    }
+  }
+  .shortcut {
+    position: absolute; // 固定在右边
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    padding: 20px 0;
+    border-radius: 10px;
+    text-align: center;
+    background: $color-background-d;
+    font-family: Helvetica;
+    .item {
+      padding: 3px;
+      line-height: 1;
+      color: $color-text-l;
+      font-size: $font-size-small;
+      &.isCurrent {
+        color: $color-theme;
+      }
     }
   }
 }

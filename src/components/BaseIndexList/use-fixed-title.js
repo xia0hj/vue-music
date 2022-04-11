@@ -17,13 +17,13 @@ export default function useFixedTitle (props) {
     }
   }
   // 当传入组件的数据变更时，计算每个group的高度
-  watch(() => props.data, async () => {
+  watch(() => props.listData, async () => {
     await nextTick()
     caculate()
   })
 
   const scrollY = ref(0)
-  const currentListIndex = ref(0)
+  const currentIndex = ref(0)
   const onScroll = (pos) => {
     // 参数pos是useScroll.js中contextEmit()发出事件携带的值
     // 后面watch了这个scrollY，当发生滚动时会调用watch的回调函数
@@ -41,7 +41,7 @@ export default function useFixedTitle (props) {
       const groupTop = listHeightsValue[i]
       const groupBottom = listHeightsValue[i + 1]
       if (newY >= groupTop && newY <= groupBottom) {
-        currentListIndex.value = i
+        currentIndex.value = i
         // groupBottom是当前组底部的高度，也就是下一组顶部的高度
         // newY是当前视图顶部的高度
         nextGroupDistance.value = groupBottom - newY
@@ -54,7 +54,7 @@ export default function useFixedTitle (props) {
     if (scrollY.value < 0) {
       return ''
     }
-    const currentGroup = props.data[currentListIndex.value]
+    const currentGroup = props.listData[currentIndex.value]
     return currentGroup ? currentGroup.title : ''
   })
 
@@ -71,6 +71,7 @@ export default function useFixedTitle (props) {
     groupRef,
     onScroll,
     fixedTitle,
-    fixedTitleStyle
+    fixedTitleStyle,
+    currentIndex
   }
 }

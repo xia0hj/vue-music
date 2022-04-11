@@ -1,6 +1,6 @@
 <template>
   <div class="singer">
-    <BaseIndexList :data="singers"/>
+    <BaseIndexList v-bind:listData="singers"/>
   </div>
 </template>
 
