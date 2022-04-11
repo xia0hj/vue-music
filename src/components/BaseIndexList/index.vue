@@ -17,7 +17,7 @@
             v-bind:key="item.id"
             class="item"
           >
-            <img class="avatar" v-lazy="item.pic" />
+            <img class="avatar" v-lazy="item.pic"/>
             <span class="name">{{item.name}}</span>
           </li>
         </ul>
@@ -25,7 +25,7 @@
     </ul>
 
     <!-- 滚动时固定在顶部的标题 -->
-    <div class="fixed" v-show="fixedTitle">
+    <div class="fixed" v-show="fixedTitle" v-bind:style="fixedTitleStyle">
       <div class="fixed-title">{{fixedTitle}}</div>
     </div>
 
@@ -49,11 +49,12 @@ export default {
     }
   },
   setup: function (props) {
-    const { groupRef, onScroll, fixedTitle } = useFixedTitle(props)
+    const { groupRef, onScroll, fixedTitle, fixedTitleStyle } = useFixedTitle(props)
     return {
       groupRef,
       onScroll,
-      fixedTitle
+      fixedTitle,
+      fixedTitleStyle
     }
   }
 }
