@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import useSlider from './useSlider.js'
-
+import BScroll from '@better-scroll/core'
+import Slide from '@better-scroll/slide'
+BScroll.use(Slide)
 export default {
   name: 'BaseSlider',
   props: {
@@ -41,13 +41,29 @@ export default {
       }
     }
   },
-  setup: function () {
-    const rootRef = ref(null)
-    const { currentPageIndex } = useSlider(rootRef)
+  data () {
     return {
-      rootRef,
-      currentPageIndex
+      currentPageIndex: 0,
+      betterScroll: ''
     }
+  },
+  mounted () {
+    const betterScroll = new BScroll(this.$refs.rootRef, {
+      click: true,
+      scrollX: true,
+      scrollY: false,
+      momentum: false,
+      bounce: false,
+      probeType: 2,
+      slide: true
+    })
+    betterScroll.on('slideWillChange', (page) => {
+      this.$data.currentPageIndex = page.pageX
+    })
+    this.$data.betterScroll = betterScroll
+  },
+  beforeUnmounted () {
+    this.$data.betterScroll.destroy()
   }
 }
 </script>
