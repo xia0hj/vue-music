@@ -42,8 +42,8 @@ export default function useShortcut (props, groupRef) {
     anchorIndex = Math.min(anchorIndex, shortcutList.value.length - 1)
     anchorIndex = Math.max(anchorIndex, 0)
     const targetElement = groupRef.value.children[anchorIndex]
-    const scrollInstance = scrollRef.value.scrollInstance
-    scrollInstance.scrollToElement(targetElement, 0) // 这是better-scroll的api
+    const betterScroll = scrollRef.value.$data.betterScroll // 这里要将BaseScroll中保存在data的BetterScroll取出来
+    betterScroll.scrollToElement(targetElement, 0) // 这是better-scroll的api
   }
 
   return {

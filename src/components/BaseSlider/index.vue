@@ -44,7 +44,7 @@ export default {
   data () {
     return {
       currentPageIndex: 0,
-      betterScroll: ''
+      betterScroll: null // 不放在data里也能用，放在data里能在beforeUnmounted()钩子里获取到
     }
   },
   mounted () {
@@ -62,7 +62,7 @@ export default {
     })
     this.$data.betterScroll = betterScroll
   },
-  beforeUnmounted () {
+  beforeUnmount () {
     this.$data.betterScroll.destroy()
   }
 }

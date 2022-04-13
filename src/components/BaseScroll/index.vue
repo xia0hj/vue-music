@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import useScroll from './useScroll.js'
-import { ref } from 'vue'
-
+import BScroll from '@better-scroll/core'
+import ObserveDOM from '@better-scroll/observe-dom'
+BScroll.use(ObserveDOM)
 export default {
   name: 'BaseScroll',
   props: {
@@ -20,14 +20,28 @@ export default {
       default: 0
     }
   },
-  emits: ['callScroll'], // 声明该组件会往外派发scroll事件
-  setup: function (props, context) {
-    const rootRef = ref(null)
-    const scrollInstance = useScroll(rootRef, props, context.emit)
+  data () {
     return {
-      rootRef,
-      scrollInstance // better-scroll的实例对象，放出来让其他组件能够通过scrollRef.value.scrollInstance获取
+      betterScroll: null
     }
+  },
+  mounted () {
+    // TODO 不知道怎样获取整个props对象
+    const scrollOptions = {
+      click: this.$props.click,
+      probeType: this.$props.probeType,
+      observeDOM: true
+    }
+    const betterScroll = new BScroll(this.$refs.rootRef, scrollOptions)
+    if (scrollOptions.probeType > 0) {
+      betterScroll.on('scroll', (pos) => {
+        this.$emit('triggerScroll', pos)
+      })
+    }
+    this.$data.betterScroll = betterScroll
+  },
+  beforeUnmount () {
+    this.$data.betterScroll.destroy()
   }
 }
 </script>
