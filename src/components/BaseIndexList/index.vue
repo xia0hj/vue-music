@@ -2,7 +2,7 @@
   <BaseScroll
     class="index-list"
     v-bind:probeType="3"
-    @triggerScroll="onScroll"
+    v-on:triggerScroll="onScroll"
     ref="scrollRef"
   >
     <ul ref="groupRef">
@@ -15,7 +15,7 @@
         <ul>
           <li
             v-for="item in group.list"
-            v-bind:key="item.id"
+            :key="item.id"
             class="item"
           >
             <img class="avatar" v-lazy="item.pic"/>
@@ -26,16 +26,20 @@
     </ul>
 
     <!-- 滚动时固定在顶部的标题 -->
-    <div class="fixed" v-show="fixedTitle" v-bind:style="fixedTitleStyle">
+    <div
+      class="fixed"
+      v-show="fixedTitle"
+      v-bind:style="fixedTitleStyle"
+    >
       <div class="fixed-title">{{fixedTitle}}</div>
     </div>
 
     <!-- 侧边的快捷栏 -->
     <div
       class="shortcut"
-      @touchstart.stop.prevent="onShortcutTouchStart"
-      @touchmove.stop.prevent="onShortcutTouchMove"
-      @touchend.stop.prevent
+      v-on:touchstart.stop.prevent="onShortcutTouchStart"
+      v-on:touchmove.stop.prevent="onShortcutTouchMove"
+      v-on:touchend.stop.prevent
     >
       <ul>
         <li
@@ -74,45 +78,11 @@ export default {
       scrollY: 0,
       listHeights: [], // 数组记录每个group的高度
       currentIndex: 0, // 当前group的index
-      nextGroupDistance: 0
-    }
-  },
-  methods: {
-    onScroll (pos) {
-      // pos是BaseScroll组件中triggerScroll事件传来的位置参数
-      // scrollY发生变化，调用watch的回调函数
-      this.$data.scrollY = -pos.y
-    },
-    onShortcutTouchStart (event) {
-
-    },
-    onShortcutTouchMove (event) {
-
-    }
-  },
-  watch: {
-    listData: async function (newValue, oldValue) {
-      await this.$nextTick()
-      const liList = this.$refs.groupRef.children
-      const listHeights = this.$data.listHeights
-      let curLiHeight = 0
-      listHeights.length = 0
-      listHeights.push(0)
-      for (let i = 0; i < liList.length; i++) {
-        curLiHeight += liList[i].clientHeight
-        listHeights.push(curLiHeight)
-      }
-    },
-    scrollY: function (newValue, oldValue) {
-      const listHeights = this.$data.listHeights
-      for (let i = 0; i < listHeights.length - 1; i++) {
-        const groupTop = listHeights[i]
-        const groupBottom = listHeights[i + 1]
-        if (newValue >= groupTop && newValue <= groupBottom) {
-          this.$data.currentIndex = i
-          this.$data.nextGroupDistance = groupBottom - newValue
-          break
-        }
+      nextGroupDistance: 0,
+      touchMoveRecord: {
+        startY: undefined,
+        endY: undefined,
+        oldAnchorIndex: undefined
       }
     }
   },
@@ -137,22 +107,66 @@ export default {
         return group.title
       })
     }
+  },
+  watch: {
+    listData: async function (newValue, oldValue) {
+      await this.$nextTick()
+      const liList = this.$refs.groupRef.children
+      const listHeights = this.$data.listHeights
+      let curLiHeight = 0
+      listHeights.length = 0
+      listHeights.push(0)
+      for (let i = 0; i < liList.length; i++) {
+        curLiHeight += liList[i].clientHeight
+        listHeights.push(curLiHeight)
+      }
+    }
+  },
+  methods: {
+    onScroll (pos) {
+      // pos是BaseScroll组件中triggerScroll事件传来的位置参数
+      // scrollY发生变化，调用watch的回调函数
+      const newY = -pos.y
+      this.$data.scrollY = newY
+      const listHeights = this.$data.listHeights
+      for (let i = 0; i < listHeights.length - 1; i++) {
+        const groupTop = listHeights[i]
+        const groupBottom = listHeights[i + 1]
+        if (newY >= groupTop && newY <= groupBottom) {
+          this.$data.currentIndex = i
+          this.$data.nextGroupDistance = groupBottom - newY
+          // break 不能加break，前一组的bottom和后一组的top是相同位置的，加了Break会导致遍历到前一组就停了
+        }
+      }
+    },
+    onShortcutTouchStart (event) {
+      const anchorIndex = parseInt(event.target.dataset.itemindex)
+      this.$data.touchMoveRecord.startY = event.touches[0].pageY // 开始触摸时记录起始y轴坐标
+      this.$data.touchMoveRecord.oldAnchorIndex = anchorIndex // 开始触摸时记录起始锚点index
+      this.scrollTo(anchorIndex)
+    },
+    onShortcutTouchMove (event) {
+      const ANCHOR_HEIGHT = 18 // 右侧快捷栏中每个锚点的高度
+      const touchMoveRecord = this.$data.touchMoveRecord
+      touchMoveRecord.endY = event.touches[0].pageY // 手指移动时实时记录y轴坐标
+      // 计算y轴坐标变化量，除以每个锚点的高度，得出锚点index的变化量
+      const anchorIndexChange = Math.floor((touchMoveRecord.endY - touchMoveRecord.startY) / ANCHOR_HEIGHT)
+      const newAnchorIndex = touchMoveRecord.oldAnchorIndex + anchorIndexChange
+      this.scrollTo(newAnchorIndex)
+    },
+    scrollTo (anchorIndex) {
+      // 有可能手指点到的不是锚点元素，导致event.target.dataset.itemindex是undefine，所以要判断如果是NaN则不进行滚动什么都不做
+      if (isNaN(anchorIndex)) {
+        return
+      }
+      // 当触摸移动到侧边快捷栏以外的地方时，onShortcutTouchMove()算得的anchorIndexChange会很大导致index超出shortcutList，需要限制anchorIndex参数值的范围避免下标越界
+      anchorIndex = Math.min(anchorIndex, this.shortcutList.length - 1)
+      anchorIndex = Math.max(anchorIndex, 0)
+      const targetElement = this.$refs.groupRef.children[anchorIndex]
+      const betterScroll = this.$refs.scrollRef.$data.betterScroll // 这里要将BaseScroll中保存在data的BetterScroll取出来
+      betterScroll.scrollToElement(targetElement, 0) // 这是better-scroll的api
+    }
   }
-  // setup: function (props) {
-  //   const { groupRef, onScroll, fixedTitle, fixedTitleStyle, currentIndex } = useFixedTitle(props)
-  //   const { shortcutList, onShortcutTouchStart, onShortcutTouchMove, scrollRef } = useShortcut(props, groupRef)
-  //   return {
-  //     groupRef,
-  //     onScroll,
-  //     fixedTitle,
-  //     fixedTitleStyle,
-  //     currentIndex,
-  //     shortcutList,
-  //     onShortcutTouchStart,
-  //     onShortcutTouchMove,
-  //     scrollRef
-  //   }
-  // }
 }
 </script>
 
