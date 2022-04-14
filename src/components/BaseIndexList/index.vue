@@ -56,8 +56,6 @@
 
 <script>
 import BaseScroll from '@/components/BaseScroll'
-import useFixedTitle from './use-fixed-title'
-import useShortcut from './use-shortcut'
 export default {
   name: 'BaseIndexList',
   components: {
@@ -71,21 +69,69 @@ export default {
       }
     }
   },
-  setup: function (props) {
-    const { groupRef, onScroll, fixedTitle, fixedTitleStyle, currentIndex } = useFixedTitle(props)
-    const { shortcutList, onShortcutTouchStart, onShortcutTouchMove, scrollRef } = useShortcut(props, groupRef)
+  data () {
     return {
-      groupRef,
-      onScroll,
-      fixedTitle,
-      fixedTitleStyle,
-      currentIndex,
-      shortcutList,
-      onShortcutTouchStart,
-      onShortcutTouchMove,
-      scrollRef
+      scrollY: 0,
+      listHeights: [], // 数组记录每个group的高度
+      currentIndex: 0 // 当前group的index
+    }
+  },
+  methods: {
+    onScroll (pos) {
+      // pos是BaseScroll组件中triggerScroll事件传来的位置参数
+      // scrollY发生变化，调用watch的回调函数
+      this.$data.scrollY = -pos.y
+    }
+  },
+  watch: {
+    listData: async function (newValue, oldValue) {
+      await this.$nextTick()
+      const liList = this.$refs.groupRef.children
+      const listHeights = this.$data.listHeights
+      let curLiHeight = 0
+      listHeights.length = 0
+      listHeights.push(0)
+      for (let i = 0; i < liList.length; i++) {
+        curLiHeight += liList[i].clientHeight
+        listHeights.push(curLiHeight)
+      }
+    },
+    scrollY: function (newValue, oldValue) {
+      const listHeights = this.$data.listHeights
+      for (let i = 0; i < listHeights.length - 1; i++) {
+        const groupTop = listHeights[i]
+        const groupBottom = listHeights[i + 1]
+        if (newValue >= groupTop && newValue <= groupBottom) {
+          this.$data.currentIndex = i
+          break
+        }
+      }
+    }
+  },
+  computed: {
+    fixedTitle: function () {
+      if (this.$data.scrollY < 0) {
+        return ''
+      }
+      const currentGroup = this.$props.listData[this.$data.currentIndex]
+      return currentGroup ? currentGroup.title : ''
     }
   }
+  // setup: function (props) {
+  //   const { groupRef, onScroll, fixedTitle, fixedTitleStyle, currentIndex } = useFixedTitle(props)
+  //   const { shortcutList, onShortcutTouchStart, onShortcutTouchMove, scrollRef } = useShortcut(props, groupRef)
+  //   return {
+  //     groupRef,
+  //     onScroll,
+  //     fixedTitle,
+  //     fixedTitleStyle,
+  //     currentIndex,
+  //     shortcutList,
+  //     onShortcutTouchStart,
+  //     onShortcutTouchMove,
+  //     scrollRef
+  //   }
+  // }
 }
 </script>
 
