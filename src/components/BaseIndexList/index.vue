@@ -73,7 +73,8 @@ export default {
     return {
       scrollY: 0,
       listHeights: [], // 数组记录每个group的高度
-      currentIndex: 0 // 当前group的index
+      currentIndex: 0, // 当前group的index
+      nextGroupDistance: 0
     }
   },
   methods: {
@@ -81,6 +82,12 @@ export default {
       // pos是BaseScroll组件中triggerScroll事件传来的位置参数
       // scrollY发生变化，调用watch的回调函数
       this.$data.scrollY = -pos.y
+    },
+    onShortcutTouchStart (event) {
+
+    },
+    onShortcutTouchMove (event) {
+
     }
   },
   watch: {
@@ -103,6 +110,7 @@ export default {
         const groupBottom = listHeights[i + 1]
         if (newValue >= groupTop && newValue <= groupBottom) {
           this.$data.currentIndex = i
+          this.$data.nextGroupDistance = groupBottom - newValue
           break
         }
       }
@@ -115,6 +123,14 @@ export default {
       }
       const currentGroup = this.$props.listData[this.$data.currentIndex]
       return currentGroup ? currentGroup.title : ''
+    },
+    fixedTitleStyle: function () {
+      const FIXED_TITLE_HEIGHT = 30 // fixedTitle的高度
+      const nextGroupDistance = this.$data.nextGroupDistance
+      const diff = (nextGroupDistance > 0 && nextGroupDistance < FIXED_TITLE_HEIGHT) ? nextGroupDistance - FIXED_TITLE_HEIGHT : 0
+      return {
+        transform: `translate3D(0, ${diff}px, 0)` // 让fixedTitle在y轴上偏移diff
+      }
     }
   }
   // setup: function (props) {
