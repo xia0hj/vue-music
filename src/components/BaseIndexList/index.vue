@@ -131,6 +131,11 @@ export default {
       return {
         transform: `translate3D(0, ${diff}px, 0)` // 让fixedTitle在y轴上偏移diff
       }
+    },
+    shortcutList: function () {
+      return this.$props.listData.map((group) => {
+        return group.title
+      })
     }
   }
   // setup: function (props) {
