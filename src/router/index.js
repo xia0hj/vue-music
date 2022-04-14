@@ -4,6 +4,7 @@ import PageRecommend from '@/views/PageRecommend.vue'
 import PageSearch from '@/views/PageSearch.vue'
 import PageSinger from '@/views/PageSinger.vue'
 import PageTopList from '@/views/PageTopList.vue'
+import PageSingerDetail from '@/views/PageSingerDetail.vue'
 
 const routes = [
   {
@@ -20,7 +21,13 @@ const routes = [
   },
   {
     path: '/singer',
-    component: PageSinger
+    component: PageSinger,
+    children: [
+      {
+        path: ':id',
+        component: PageSingerDetail
+      }
+    ]
   },
   {
     path: '/top-list',

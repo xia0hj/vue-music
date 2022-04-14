@@ -24,6 +24,9 @@ const commonParams = {
   platform: 'yqq.json'
 }
 
+// 歌曲图片加载失败时使用的默认图片
+const fallbackPicUrl = 'https://y.gtimg.cn/mediastyle/music_v11/extra/default_300x300.jpg?max_age=31536000'
+
 // 函数定义 --------------------------------------------------------------------
 
 // 获取一个随机数值
@@ -232,10 +235,91 @@ const registerSingerList = (app) => {
   })
 }
 
+const registerSingerDetail = (app) => {
+  app.get('/api/getSingerDetail', (appRequest, appResponse) => {
+    const url = 'https://u.y.qq.com/cgi-bin/musics.fcg'
+
+    const data = JSON.stringify({
+      comm: { ct: 24, cv: 0 },
+      singerSongList: {
+        method: 'GetSingerSongList',
+        param: { order: 1, singerMid: appRequest.query.mid, begin: 0, num: 100 },
+        module: 'musichall.song_list_server'
+      }
+    })
+
+    const randomKey = getRandomValue('getSingerSong')
+    const sign = getSecuritySign(data)
+
+    getByAxios(url, {
+      sign,
+      '-': randomKey,
+      data
+    }).then((axiosResponse) => {
+      const data = axiosResponse.data
+      if (data.code === CODE_OK) {
+        const list = data.singerSongList.data.songList
+        // 歌单详情、榜单详情接口都有类似处理逻辑，固封装成函数
+        const songList = handleSongList(list)
+
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            songs: songList
+          }
+        })
+      } else {
+        appResponse.json(data)
+      }
+    })
+  })
+}
+
+const handleSongList = (list) => {
+  const songList = []
+
+  list.forEach((item) => {
+    const info = item.songInfo || item
+    if (info.pay.pay_play !== 0 || !info.interval) {
+      // 过滤付费歌曲和获取不到时长的歌曲
+      return
+    }
+
+    // 构造歌曲的数据结构
+    const song = {
+      id: info.id,
+      mid: info.mid,
+      name: info.name,
+      singer: mergeSinger(info.singer),
+      url: '', // 在另一个接口获取
+      duration: info.interval,
+      pic: info.album.mid ? `https://y.gtimg.cn/music/photo_new/T002R800x800M000${info.album.mid}.jpg?max_age=2592000` : fallbackPicUrl,
+      album: info.album.name
+    }
+
+    songList.push(song)
+  })
+
+  return songList
+}
+
+// 合并多个歌手的姓名
+const mergeSinger = (singer) => {
+  const ret = []
+  if (!singer) {
+    return ''
+  }
+  singer.forEach((s) => {
+    ret.push(s.name)
+  })
+  return ret.join('/')
+}
+
 // 注册后端路由
 const registerRouter = (app) => {
   registerRecommend(app)
   registerSingerList(app)
+  registerSingerDetail(app)
 }
 
 module.exports = registerRouter

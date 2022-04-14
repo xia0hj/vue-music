@@ -1,6 +1,10 @@
 <template>
   <div class="singer">
-    <BaseIndexList v-bind:listData="singers"/>
+    <BaseIndexList
+      v-bind:listData="singers"
+      v-on:select="selectSinger"
+    />
+    <router-view v-bind:singer="selectedSinger"/>
   </div>
 </template>
 
@@ -15,13 +19,22 @@ export default {
   },
   data: function () {
     return {
-      singers: []
+      singers: [],
+      selectedSinger: null
     }
   },
   created: async function () {
     const result = await getSingerList()
     console.log('page singer get singerList data = ', result)
     this.$data.singers = result.singers
+  },
+  methods: {
+    selectSinger (singer) {
+      this.$data.selectedSinger = singer
+      this.$router.push({
+        path: `/singer/${singer.mid}`
+      })
+    }
   }
 }
 </script>
