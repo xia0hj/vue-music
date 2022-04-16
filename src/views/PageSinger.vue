@@ -31,6 +31,7 @@ export default {
   methods: {
     selectSinger (singer) {
       this.$data.selectedSinger = singer
+      // this.$router.push相当于<router-link to="">
       this.$router.push({
         path: `/singer/${singer.mid}`
       })

@@ -6,6 +6,7 @@
 
 <script>
 import { getSingerDetail } from '@/service/singer.js'
+import { processSongs } from '@/service/song'
 export default {
   name: 'PageSingerDetail',
   props: {
@@ -14,6 +15,8 @@ export default {
   async created () {
     const result = await getSingerDetail(this.$props.singer)
     console.log('page singer detail get data = ', result)
+    const songs = await processSongs(result.songs)
+    console.log('page singer detail get songs = ', songs)
   }
 }
 </script>
