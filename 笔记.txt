@@ -47,3 +47,6 @@
 
 2022/4/14
 1. 注意二级路由的写法
+
+2022/4/16
+1. volar没有css中reference提示，在jsconfig.json中添加compilerOptions.jsx=preserve
