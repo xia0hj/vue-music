@@ -2,7 +2,12 @@
   <div class="music-list">
 
     <!-- 左上角的返回按钮 -->
-    <div class="back"><i class="icon-back"/></div>
+    <div
+      class="back"
+      v-on:click="goBack"
+    >
+      <i class="icon-back"/>
+    </div>
 
     <!-- 标题文本 -->
     <h1 class="title">{{title}}</h1>
@@ -11,12 +16,17 @@
     <div
       class="bg-image"
       v-bind:style="bgImageStyle"
+      ref="bgImageRef"
     >
       <div class="filter"/>
     </div>
 
     <!-- 可滚动的歌曲列表 -->
-    <BaseScroll class="list">
+    <BaseScroll
+      class="list"
+      v-bind:style="scrollListStyle"
+      v-loading="isLoading"
+    >
       <div class="song-list-wrapper">
         <BaseSongList v-bind:songs="songs"/>
       </div>
@@ -37,18 +47,38 @@ export default {
   props: {
     songs: {
       type: Array,
-      default () {
+      default: function () {
         return []
       }
     },
     title: String,
-    pic: String
+    pic: String,
+    isLoading: Boolean
+  },
+  data: function () {
+    return {
+      imageHeight: 0
+    }
   },
   computed: {
     bgImageStyle: function () {
       return {
         'background-image': `url(${this.$props.pic})`
       }
+    },
+    scrollListStyle: function () {
+      return {
+        top: `${this.$data.imageHeight}px`
+      }
+    }
+  },
+  mounted: function () {
+    console.log('client height = ', this.$refs.bgImageRef.clientHeight)
+    this.$data.imageHeight = this.$refs.bgImageRef.clientHeight
+  },
+  methods: {
+    goBack: function () {
+      this.$router.back()
     }
   }
 }
@@ -90,6 +120,8 @@ export default {
     width: 100%;
     transform-origin: top;
     background-size: cover;
+    height: 0;
+    padding-top: 70%;
     .filter {
       position: absolute;
       top: 0;

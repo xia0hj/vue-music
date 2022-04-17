@@ -50,3 +50,7 @@
 
 2022/4/16
 1. volar没有css中reference提示，在jsconfig.json中添加compilerOptions.jsx=preserve
+
+2022/4/17
+1. music-list包括头部图片，以及一个用BaseScroll包裹的BaseSongList
+2. CSS技巧，height:0; + padding-top:70%; 指定宽高比

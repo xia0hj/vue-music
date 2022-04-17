@@ -4,6 +4,7 @@
       v-bind:songs="songs"
       v-bind:title="title"
       v-bind:pic="pic"
+      v-bind:isLoading="isLoading"
     />
   </div>
 </template>
@@ -22,7 +23,8 @@ export default {
   },
   data () {
     return {
-      songs: []
+      songs: [],
+      isLoading: true
     }
   },
   computed: {
@@ -39,6 +41,7 @@ export default {
     const songs = await processSongs(result.songs)
     console.log('page singer detail get songs = ', songs)
     this.$data.songs = songs
+    this.$data.isLoading = false
   }
 }
 </script>
