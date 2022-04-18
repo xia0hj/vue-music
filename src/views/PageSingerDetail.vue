@@ -52,11 +52,16 @@ export default {
           returnSinger = cachedSinger
         }
       }
-      console.log('this.$route = ', this.$route)
       return returnSinger
     }
   },
   async created () {
+    if (!this.computedSinger) {
+      // 歌手详情页的路径是/singer/${mid}，当获取不到singer时需要回退到/singer
+      const prePath = this.$route.matched[0].path
+      this.$router.push({ path: prePath })
+      return
+    }
     const result = await getSingerDetail(this.computedSinger)
     console.log('page singer detail get data = ', result)
     const songs = await processSongs(result.songs)
