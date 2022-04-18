@@ -18,7 +18,7 @@
       v-bind:style="bgImageStyle"
       ref="bgImageRef"
     >
-      <div class="filter"/>
+      <div class="filter" v-bind:style="imagefilterStyle"/>
     </div>
 
     <!-- 可滚动的歌曲列表 -->
@@ -100,6 +100,21 @@ export default {
     scrollListStyle: function () {
       return {
         top: `${this.$data.imageHeight}px`
+      }
+    },
+    imagefilterStyle: function () {
+      let blur = 0
+      const scrollY = this.$data.scrollY
+      const imageHeight = this.$data.imageHeight
+      // 歌曲列表往上拉，将背景图片变为模糊
+      if (scrollY >= 0) {
+        blur = Math.min(
+          this.$data.maxTranslateY / imageHeight,
+          scrollY / imageHeight
+        ) * 20
+      }
+      return {
+        backdropFilter: `blur(${blur}px)`
       }
     }
   },

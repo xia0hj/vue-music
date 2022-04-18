@@ -59,3 +59,4 @@
 1. z-index, translateZ层级遮挡；transform:scale()固定比例拉伸
 2. ios中z-index失效问题
 3. vue启动后，可用手机打开链接进行测试
+4. this.xxx 取data,props等属性时需要进行依赖收集，用局部变量缓存一下，避免重复调用
