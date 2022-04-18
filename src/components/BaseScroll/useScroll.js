@@ -15,7 +15,7 @@ export default function useScroll (wrapperRef, scrollProps, contextEmit) {
 
     if (scrollProps.probeType > 0) {
       scrollInstance.value.on('scroll', (position) => {
-        contextEmit('callScroll', position)
+        contextEmit('emitScroll', position)
       })
     }
   })

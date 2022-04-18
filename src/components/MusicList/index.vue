@@ -26,6 +26,8 @@
       class="list"
       v-bind:style="scrollListStyle"
       v-loading="isLoading"
+      v-bind:probeType="3"
+      v-on:emitScroll="onScroll"
     >
       <div class="song-list-wrapper">
         <BaseSongList v-bind:songs="songs"/>
@@ -36,8 +38,12 @@
 </template>
 
 <script>
+
 import BaseScroll from '@/components/BaseScroll'
 import BaseSongList from '@/components/BaseSongList'
+
+const TITLE_HEIGHT = 40 // 顶部的标题高度，当列表往上滚时不能遮挡标题
+
 export default {
   name: 'MusicList',
   components: {
@@ -57,13 +63,38 @@ export default {
   },
   data: function () {
     return {
-      imageHeight: 0
+      imageHeight: 0,
+      scrollY: 0,
+      maxTranslateY: 0 // 歌曲列表往上滚动且没有遮挡标题的最大距离
     }
   },
   computed: {
     bgImageStyle: function () {
+      const scrollY = this.$data.scrollY
+      let zIndex = 0
+      let paddingTop = '70%'
+      let height = 0
+      let translateZ = 0 // 用于解决ios中z-index失效的问题
+
+      if (scrollY > this.$data.maxTranslateY) {
+        zIndex = 10
+        paddingTop = 0
+        height = `${TITLE_HEIGHT}px`
+        translateZ = 1
+      }
+
+      // 如果往下拉，需要缩放顶部的背景图片
+      let bgImageScale = 1
+      if (scrollY < 0) {
+        bgImageScale = 1 + Math.abs(scrollY / this.$data.imageHeight)
+      }
+
       return {
-        'background-image': `url(${this.$props.pic})`
+        'background-image': `url(${this.$props.pic})`,
+        'z-index': zIndex,
+        'padding-top': paddingTop,
+        height,
+        transform: `scale(${bgImageScale}) translateZ(${translateZ}px)`
       }
     },
     scrollListStyle: function () {
@@ -73,12 +104,15 @@ export default {
     }
   },
   mounted: function () {
-    console.log('client height = ', this.$refs.bgImageRef.clientHeight)
     this.$data.imageHeight = this.$refs.bgImageRef.clientHeight
+    this.$data.maxTranslateY = this.$data.imageHeight - TITLE_HEIGHT
   },
   methods: {
     goBack: function () {
       this.$router.back()
+    },
+    onScroll: function (pos) {
+      this.$data.scrollY = -pos.y
     }
   }
 }
@@ -120,8 +154,6 @@ export default {
     width: 100%;
     transform-origin: top;
     background-size: cover;
-    height: 0;
-    padding-top: 70%;
     .filter {
       position: absolute;
       top: 0;

@@ -20,7 +20,7 @@ export default {
       default: 0
     }
   },
-  emits: ['callScroll'], // 声明该组件会往外派发scroll事件
+  emits: ['emitScroll'], // 声明该组件会往外派发scroll事件
   setup: function (props, context) {
     const rootRef = ref(null)
     const scrollInstance = useScroll(rootRef, props, context.emit)
