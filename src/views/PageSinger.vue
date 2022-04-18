@@ -11,6 +11,7 @@
 <script>
 import { getSingerList } from '@/service/singer.js'
 import BaseIndexList from '@/components/BaseIndexList'
+import { SINGER_KEY } from '@/assets/js/constant'
 
 export default {
   name: 'PageSinger',
@@ -29,8 +30,9 @@ export default {
     this.$data.singers = result.singers
   },
   methods: {
-    selectSinger (singer) {
+    selectSinger: function (singer) {
       this.$data.selectedSinger = singer
+      window.sessionStorage.setItem(SINGER_KEY, JSON.stringify(singer)) // 把singer缓存起来，方便歌手详情页面刷新时使用
       // this.$router.push相当于<router-link to="">
       this.$router.push({
         path: `/singer/${singer.mid}`

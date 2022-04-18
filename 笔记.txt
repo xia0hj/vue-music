@@ -60,3 +60,5 @@
 2. ios中z-index失效问题
 3. vue启动后，可用手机打开链接进行测试
 4. this.xxx 取data,props等属性时需要进行依赖收集，用局部变量缓存一下，避免重复调用
+5. JSON.stringify JSON.parse 对象和字符串互相转换
+6. window.sessionStorage.setItem(k,v) / getItem(k) 只能保存字符串

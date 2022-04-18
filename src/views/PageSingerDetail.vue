@@ -10,9 +10,12 @@
 </template>
 
 <script>
+
 import { getSingerDetail } from '@/service/singer.js'
 import { processSongs } from '@/service/song'
 import MusicList from '@/components/MusicList'
+import { SINGER_KEY } from '@/assets/js/constant'
+
 export default {
   name: 'PageSingerDetail',
   components: {
@@ -29,14 +32,32 @@ export default {
   },
   computed: {
     pic () {
-      return this.$props.singer && this.$props.singer.pic
+      const singer = this.computedSinger
+      return singer && singer.pic
     },
     title () {
-      return this.$props.singer && this.$props.singer.name
+      const singer = this.computedSinger
+      return singer && singer.name
+    },
+    computedSinger: function () {
+      // 如果是从歌手列表点进来详情页面，父组件会传一个singer参数
+      // 如果刷新详情页面，singer参数从缓存中获取
+      let returnSinger = null
+      const propsSinger = this.$props.singer
+      if (propsSinger) {
+        returnSinger = propsSinger
+      } else {
+        const cachedSinger = JSON.parse(window.sessionStorage.getItem(SINGER_KEY))
+        if (cachedSinger && cachedSinger.mid === this.$route.params.id) {
+          returnSinger = cachedSinger
+        }
+      }
+      console.log('this.$route = ', this.$route)
+      return returnSinger
     }
   },
   async created () {
-    const result = await getSingerDetail(this.$props.singer)
+    const result = await getSingerDetail(this.computedSinger)
     console.log('page singer detail get data = ', result)
     const songs = await processSongs(result.songs)
     console.log('page singer detail get songs = ', songs)
