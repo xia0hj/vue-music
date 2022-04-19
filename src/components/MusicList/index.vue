@@ -26,7 +26,7 @@
       class="list"
       v-bind:style="scrollListStyle"
       v-loading="isLoading"
-      v-no-result="isNoResult"
+      v-no-result:[noResultText]="isNoResult"
       v-bind:probeType="3"
       v-on:emitScroll="onScroll"
     >
@@ -60,7 +60,13 @@ export default {
     },
     title: String,
     pic: String,
-    isLoading: Boolean
+    isLoading: Boolean,
+    noResultText: {
+      type: String,
+      default: function () {
+        return '抱歉，没有找到可播放的歌曲'
+      }
+    }
   },
   data: function () {
     return {

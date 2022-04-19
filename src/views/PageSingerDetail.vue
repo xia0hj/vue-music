@@ -66,9 +66,8 @@ export default {
     console.log('page singer detail get data = ', result)
     const songs = await processSongs(result.songs)
     console.log('page singer detail get songs = ', songs)
-    // 测试取不到songs的情况
-    // this.$data.songs = songs
-    this.$data.songs = []
+    // this.$data.songs = [] // 测试取不到songs的情况
+    this.$data.songs = songs
     this.$data.isLoading = false
   }
 }
