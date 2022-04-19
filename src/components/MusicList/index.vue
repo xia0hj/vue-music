@@ -31,7 +31,10 @@
       v-on:emitScroll="onScroll"
     >
       <div class="song-list-wrapper">
-        <BaseSongList v-bind:songs="songs"/>
+        <BaseSongList
+          v-bind:songs="songs"
+          v-on:selectItem="selectSong"
+        />
       </div>
     </BaseScroll>
 
@@ -39,7 +42,7 @@
 </template>
 
 <script>
-
+import { mapActions } from 'vuex'
 import BaseScroll from '@/components/BaseScroll'
 import BaseSongList from '@/components/BaseSongList'
 
@@ -142,7 +145,23 @@ export default {
     },
     onScroll: function (pos) {
       this.$data.scrollY = -pos.y
-    }
+    },
+    selectSong: function ({ song, index }) {
+      // {song,index}由子组件BaseSongList派发的事件selectItem传过来
+      // selectPlay参数{list,index}
+      this.$store.dispatch('selectPlay', {
+        list: this.$props.songs,
+        index: index
+      })
+      this.$store.commit('setIsFullScreen', false)
+      // this.play({
+      //   list: this.$props.songs,
+      //   index: index
+      // })
+    },
+    ...mapActions({
+      play: 'selectPlay' // 将this.play()映射为this.$store.dispatch('selectPlay')，其中selectPlay是Action
+    })
   }
 }
 </script>

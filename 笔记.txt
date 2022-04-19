@@ -68,3 +68,9 @@
 2. <transition name="slide"> 其中的name用于替换上面的v
 3. 详看https://blog.csdn.net/qq_40891322/article/details/109738212
 4. 自定义指令：v-no-result:[text]="isNoResult" 在directive.js中可通过binding.arg获取text，通过binding.value获取isNoResult
+5. vuex
+  （1）state定义状态
+  （2）getters定义获取状态的函数
+  （3）mutations定义修改状态的函数，必须同步执行，this.$store.commit(mut_name, payload)
+  （4）Actions可提交多个mutation且可以异步执行，this.$store.dispatch(act_name, payload)
+  （5）mapActions/mapMutations 可在组件中将this.$store.commit()映射为this.xxx()
