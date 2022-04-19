@@ -62,3 +62,8 @@
 4. this.xxx 取data,props等属性时需要进行依赖收集，用局部变量缓存一下，避免重复调用
 5. JSON.stringify JSON.parse 对象和字符串互相转换
 6. window.sessionStorage.setItem(k,v) / getItem(k) 只能保存字符串
+
+2022/4/19
+1. vue router过渡样式6个class：v-enter, v-enter-to, v-enter-active, v-leave, v-leave-to, v-leave-active
+2. <transition name="slide"> 其中的name用于替换上面的v
+3. 详看https://blog.csdn.net/qq_40891322/article/details/109738212

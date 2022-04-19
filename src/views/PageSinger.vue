@@ -4,7 +4,12 @@
       v-bind:listData="singers"
       v-on:select="selectSinger"
     />
-    <router-view v-bind:singer="selectedSinger"/>
+    <!-- router-view v-bind:singer="selectedSinger"/ -->
+    <router-view v-slot="{ Component }">
+      <transition appear name="slide">
+        <component :is="Component" v-bind:singer="selectedSinger"/>
+      </transition>
+    </router-view>
   </div>
 </template>
 
