@@ -18,6 +18,15 @@
       v-bind:style="bgImageStyle"
       ref="bgImageRef"
     >
+      <!-- 随机播放按钮 -->
+      <div class="play-btn-wrapper">
+        <div v-show="songs.length>0" class="play-btn">
+          <i class="icon-play"/>
+          <span class="text" v-on:click="random">随机播放全部</span>
+        </div>
+      </div>
+
+      <!-- 给图片加一层模糊滤镜 -->
       <div class="filter" v-bind:style="imagefilterStyle"/>
     </div>
 
@@ -148,19 +157,23 @@ export default {
     },
     selectSong: function ({ song, index }) {
       // {song,index}由子组件BaseSongList派发的事件selectItem传过来
-      // selectPlay参数{list,index}
-      this.$store.dispatch('selectPlay', {
+      // sequentialPlay参数{list,index}
+      // 不使用mapActions直接dispatch
+      this.$store.dispatch('sequentialPlay', {
         list: this.$props.songs,
         index: index
       })
-      this.$store.commit('setIsFullScreen', false)
       // this.play({
       //   list: this.$props.songs,
       //   index: index
       // })
     },
+    random: function () {
+      debugger
+      this.randomPlay(this.$props.songs)
+    },
     ...mapActions({
-      play: 'selectPlay' // 将this.play()映射为this.$store.dispatch('selectPlay')，其中selectPlay是Action
+      randomPlay: 'randomPlay' // 将this.randomPlay()映射为this.$store.dispatch('randomPlay')，key是this调用的方法，value是dispatch的Action函数名
     })
   }
 }
@@ -202,6 +215,34 @@ export default {
     width: 100%;
     transform-origin: top;
     background-size: cover;
+    .play-btn-wrapper {
+      position: absolute;
+      bottom: 20px;
+      z-index: 10;
+      width: 100%;
+      .play-btn {
+        box-sizing: border-box;
+        width: 135px;
+        padding: 7px 0;
+        margin: 0 auto;
+        text-align: center;
+        border: 1px solid $color-theme;
+        color: $color-theme;
+        border-radius: 100px;
+        font-size: 0;
+      }
+      .icon-play {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 6px;
+        font-size: $font-size-medium-x;
+      }
+      .text {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: $font-size-small;
+      }
+    }
     .filter {
       position: absolute;
       top: 0;

@@ -73,4 +73,4 @@
   （2）getters定义获取状态的函数
   （3）mutations定义修改状态的函数，必须同步执行，this.$store.commit(mut_name, payload)
   （4）Actions可提交多个mutation且可以异步执行，this.$store.dispatch(act_name, payload)
-  （5）mapActions/mapMutations 可在组件中将this.$store.commit()映射为this.xxx()
+  （5）mapActions/mapMutations 可在组件中将this.$store.commit()映射为this.xxx()，注意xxx方法名不要与methods中其他方法重名

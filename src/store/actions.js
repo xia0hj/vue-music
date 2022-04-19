@@ -1,10 +1,23 @@
 import { PLAY_MODE } from '@/assets/js/constant'
+import { shuffle } from '@/assets/js/utils'
 
-export function selectPlay (context, { list, index }) {
+// 顺序播放
+export function sequentialPlay (context, { list, index }) {
   context.commit('setPlayMode', PLAY_MODE.sequence)
   context.commit('setSequenceList', list)
   context.commit('setPlayList', list)
   context.commit('setIsPlaying', true)
   context.commit('setIsFullScreen', true)
   context.commit('setCurrentIndex', index)
+}
+
+// 随机播放
+export function randomPlay (context, list) {
+  debugger
+  context.commit('setPlayMode', PLAY_MODE.random)
+  context.commit('setSequenceList', list)
+  context.commit('setPlayList', shuffle(list))
+  context.commit('setIsPlaying', true)
+  context.commit('setIsFullScreen', true)
+  context.commit('setCurrentIndex', 0)
 }
