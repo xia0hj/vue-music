@@ -26,6 +26,7 @@
       class="list"
       v-bind:style="scrollListStyle"
       v-loading="isLoading"
+      v-no-result="isNoResult"
       v-bind:probeType="3"
       v-on:emitScroll="onScroll"
     >
@@ -115,6 +116,13 @@ export default {
       }
       return {
         backdropFilter: `blur(${blur}px)`
+      }
+    },
+    isNoResult: function () {
+      if (!this.$props.isLoading && !this.$props.songs.length) {
+        return true
+      } else {
+        return false
       }
     }
   },

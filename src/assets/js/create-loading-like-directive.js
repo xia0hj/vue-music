@@ -5,17 +5,19 @@ import { addStyleClass, removeStyleClass } from '@/assets/js/dom-methods'
 const relativeStyleClass = 'g-relative'
 
 export default function createLoadingLikeDirective (component) {
-  const append = (el) => {
+  const componentName = component.name
+
+  function append (el) {
     const style = getComputedStyle(el)
     // 检查dom的样式position是否属于以下其中之一，如果不属于则需要为其修改样式，让loading图能够在正中心显示
     if (['absolute', 'fixed', 'relative'].indexOf(style.position) === -1) {
       addStyleClass(el, relativeStyleClass)
     }
-    el.appendChild(el.loadingInstance.$el)
+    el.appendChild(el[componentName].instance.$el)
   }
-  const remove = (el) => {
+  function remove (el) {
     removeStyleClass(el, relativeStyleClass)
-    el.removeChild(el.loadingInstance.$el)
+    el.removeChild(el[componentName].instance.$el)
   }
 
   return {
@@ -23,14 +25,19 @@ export default function createLoadingLikeDirective (component) {
     // binding.value指向v-loading="isLoading"中isLoading这个变量
     mounted: function (el, binding) {
       const app = createApp(component)
-      const loadingInstance = app.mount(document.createElement('div'))
-      el.loadingInstance = loadingInstance // 将loading的div实例保存到el对象上，让updated函数中能够通过el取得div
+      const componentInstance = app.mount(document.createElement('div'))
+
+      // 将instance放到el.{name}.instance上
+      if (!el[componentName]) {
+        el[componentName] = {}
+      }
+      el[componentName].instance = componentInstance // 将loading的div实例保存到el对象上，让updated函数中能够通过el取得div
 
       // 从动态参数中取加载的提示文本
       const loadingText = binding.arg
       if (typeof loadingText !== 'undefined') {
       // 调用BaseLoading组件中的setTitle方法
-        el.loadingInstance.setTitle(loadingText)
+        el[componentName].instance.setTitle(loadingText)
       }
 
       if (binding.value) {
@@ -40,7 +47,7 @@ export default function createLoadingLikeDirective (component) {
     updated: function (el, binding) {
       const loadingText = binding.arg
       if (typeof loadingText !== 'undefined') {
-        el.loadingInstance.setTitle(loadingText)
+        el[componentName].instance.setTitle(loadingText)
       }
       if (binding.value !== binding.oldValue) {
         if (binding.value === true) {
