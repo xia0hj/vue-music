@@ -19,7 +19,7 @@
       ref="bgImageRef"
     >
       <!-- 随机播放按钮 -->
-      <div class="play-btn-wrapper">
+      <div class="play-btn-wrapper" v-bind:style="playBtnStyle">
         <div v-show="songs.length>0" class="play-btn">
           <i class="icon-play"/>
           <span class="text" v-on:click="random">随机播放全部</span>
@@ -136,6 +136,16 @@ export default {
         backdropFilter: `blur(${blur}px)`
       }
     },
+    playBtnStyle: function () {
+      // 由于往上滚动后会修改背景图片的z-index，导致随机播放按钮显示在歌曲列表上面
+      let displayVal = ''
+      if (this.$data.scrollY >= this.$data.maxTranslateY) {
+        displayVal = 'none'
+      }
+      return {
+        display: displayVal
+      }
+    },
     isNoResult: function () {
       if (!this.$props.isLoading && !this.$props.songs.length) {
         return true
@@ -169,7 +179,6 @@ export default {
       // })
     },
     random: function () {
-      debugger
       this.randomPlay(this.$props.songs)
     },
     ...mapActions({
