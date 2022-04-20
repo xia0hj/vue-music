@@ -4,14 +4,40 @@
       class="normal-player"
       v-show="isFullScreen"
     >
+      <!-- 背景图片 -->
       <div class="background">
         <img v-bind:src="currentSong.pic"/>
       </div>
 
+      <!-- 顶部 -->
       <div class="top">
         <div class="back" v-on:click="goBack"><i class="icon-back"/></div>
         <h1 class="title">{{ currentSong.name }}</h1>
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
+      </div>
+
+      <!-- 底部播放控制按钮 -->
+      <div class="bottom">
+        <div class="operators">
+          <!-- 左侧按钮 -->
+          <div class="icon i-left">
+            <i class="icon-sequence"/>
+          </div>
+          <div class="icon i-left">
+            <i class="icon-prev"/>
+          </div>
+          <!-- 中间按钮 -->
+          <div class="icon i-center" v-on:click="togglePlay">
+            <i v-bind:class="playIconClass"/>
+          </div>
+          <!-- 右侧按钮 -->
+          <div class="icon i-right">
+            <i class="icon-next"/>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-not-favorite"/>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -28,7 +54,11 @@ export default {
   setup () {
     const store = useStore()
     const isFullScreen = computed(() => store.state.isFullScreen)
+    const isPlaying = computed(() => store.state.isPlaying)
     const currentSong = computed(() => store.getters.currentSong)
+    const playIconClass = computed(() => {
+      return isPlaying.value ? 'icon-pause' : 'icon-play'
+    })
     const audioRef = ref(null)
 
     watch(currentSong, (newSong) => {
@@ -44,15 +74,20 @@ export default {
     function goBack () {
       store.commit('setIsFullScreen', false)
     }
+    function togglePlay () {
+      store.commit('setIsPlaying', !isPlaying.value)
+    }
 
     return {
       // 计算属性
       isFullScreen,
       currentSong,
+      playIconClass,
       // ref
       audioRef,
       // methods
-      goBack
+      goBack,
+      togglePlay
     }
   }
 }
@@ -114,6 +149,41 @@ export default {
         text-align: center;
         font-size: $font-size-medium;
         color: $color-text;
+      }
+    }
+    .bottom {
+      position: absolute;
+      bottom: 50px;
+      width: 100%;
+      .operators {
+        display: flex;
+        align-items: center;
+        .icon {
+          flex: 1;
+          color: $color-theme;
+          &.disable {
+            color: $color-theme-d;
+          }
+          i {
+            font-size: 30px;
+          }
+        }
+        .i-left {
+          text-align: right;
+        }
+        .i-center {
+          padding: 0 20px;
+          text-align: center;
+          i {
+            font-size: 40px;
+          }
+        }
+        .i-right {
+          text-align: left
+        }
+        .icon-favorite {
+          color: $color-sub-theme;
+        }
       }
     }
   }
