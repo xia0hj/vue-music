@@ -84,3 +84,6 @@ MusicList：
   2.BaseScroll包裹BaseSongList，并在滚动时记录scrollY
   3.背景图片，当往上滚动时修改图片的模糊滤镜，滚动到顶部时修改背景图片div的z-index让顶部标题不被列表遮挡，随机播放按钮
   4.缓存当前歌手信息
+
+1.audio标签有一个加载过程，加载完成后会派发canplay事件
+2.chrome控制台可模拟网速慢的情况，Network中将No throttling改为3G或自定义

@@ -23,15 +23,15 @@
           <div class="icon i-left">
             <i class="icon-sequence"/>
           </div>
-          <div class="icon i-left">
+          <div class="icon i-left" v-bind:class="disableBtnClass">
             <i class="icon-prev" v-on:click="playPrev"/>
           </div>
           <!-- 中间按钮 -->
-          <div class="icon i-center">
+          <div class="icon i-center" v-bind:class="disableBtnClass">
             <i v-bind:class="playIconClass" v-on:click="togglePlay"/>
           </div>
           <!-- 右侧按钮 -->
-          <div class="icon i-right">
+          <div class="icon i-right" v-bind:class="disableBtnClass">
             <i class="icon-next" v-on:click="playNext"/>
           </div>
           <div class="icon i-right">
@@ -41,7 +41,12 @@
       </div>
     </div>
 
-    <audio ref="audioRef" v-on:pause="onAudioPause"/>
+    <audio
+      ref="audioRef"
+      v-on:pause="onAudioPause"
+      v-on:canplay="onSongReady"
+      v-on:error="onSongError"
+    />
   </div>
 </template>
 
@@ -52,6 +57,8 @@ import { computed, watch, ref } from 'vue'
 export default {
   name: 'MusicPlayer',
   setup () {
+    const isSongReady = ref(false)
+    const audioRef = ref(null)
     const store = useStore()
     const isFullScreen = computed(() => store.state.isFullScreen)
     const isPlaying = computed(() => store.state.isPlaying)
@@ -61,20 +68,28 @@ export default {
     const playIconClass = computed(() => {
       return isPlaying.value ? 'icon-pause' : 'icon-play'
     })
-    const audioRef = ref(null)
+    const disableBtnClass = computed(() => {
+      // 如果audio正在加载歌曲，为上一首/下一首/播放按钮添加禁用样式
+      return isSongReady.value ? '' : 'disable'
+    })
 
     // watch ---------------------------------
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return
       }
+      isSongReady.value = false
       const audioEl = audioRef.value
       audioEl.src = newSong.url
       audioEl.play()
     })
-    watch(isPlaying, (newPlaying) => {
+    watch(isPlaying, (newPlayingState) => {
+      // audio正在加载歌曲时，不允许切换播放/暂停
+      if (!isSongReady.value) {
+        return
+      }
       const audioEl = audioRef.value
-      newPlaying ? audioEl.play() : audioEl.pause()
+      newPlayingState ? audioEl.play() : audioEl.pause()
     })
 
     // methods ---------------------------------
@@ -84,6 +99,10 @@ export default {
     }
     // 播放键使用，切换播放/暂停状态
     function togglePlay () {
+      // audio正在加载歌曲时，不允许切换播放/暂停
+      if (!isSongReady.value) {
+        return
+      }
       store.commit('setIsPlaying', !isPlaying.value)
     }
     // audio dom的原生事件pause，有时可能audio因其他原因暂停了，但isPlaying状态没有同步修改造成出错
@@ -95,8 +114,8 @@ export default {
       const list = playList.value
       let newIndex = currentIndex.value - 1
 
-      // 特殊情况
-      if (!list.length) {
+      // audio正在加载歌曲时，不允许切换歌曲
+      if (!isSongReady.value || !list.length) {
         return
       }
       if (list.length === 1) {
@@ -119,7 +138,7 @@ export default {
       let newIndex = currentIndex.value + 1
 
       // 特殊情况
-      if (!list.length) {
+      if (!isSongReady.value || !list.length) {
         return
       }
       if (list.length === 1) {
@@ -142,12 +161,25 @@ export default {
       audioEl.currentTime = 0
       audioEl.play()
     }
+    // audio通知可播放
+    function onSongReady () {
+      if (isSongReady.value) {
+        return
+      }
+      isSongReady.value = true
+    }
+    // audio通知加载歌曲出错，避免一直卡在isSongReady=false的状态不能切换
+    function onSongError () {
+      isSongReady.value = true
+      console.warn('audio加载歌曲出错,当前歌曲=', currentSong)
+    }
 
     return {
       // 计算属性
       isFullScreen,
       currentSong,
       playIconClass,
+      disableBtnClass,
       // ref
       audioRef,
       // methods
@@ -155,7 +187,9 @@ export default {
       togglePlay,
       onAudioPause,
       playPrev,
-      playNext
+      playNext,
+      onSongReady,
+      onSongError
     }
   }
 }
