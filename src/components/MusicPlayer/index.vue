@@ -21,7 +21,7 @@
         <div class="operators">
           <!-- 左侧按钮 -->
           <div class="icon i-left">
-            <i class="icon-sequence"/>
+            <i v-bind:class="modeIcon" v-on:click="changeMode"/>
           </div>
           <div class="icon i-left" v-bind:class="disableBtnClass">
             <i class="icon-prev" v-on:click="playPrev"/>
@@ -54,6 +54,8 @@
 import { useStore } from 'vuex'
 import { computed, watch, ref } from 'vue'
 
+import useMode from './use-mode'
+
 export default {
   name: 'MusicPlayer',
   setup () {
@@ -72,6 +74,12 @@ export default {
       // 如果audio正在加载歌曲，为上一首/下一首/播放按钮添加禁用样式
       return isSongReady.value ? '' : 'disable'
     })
+
+    // 钩子函数
+    const {
+      modeIcon, // computed:当前播放模式的按钮图标
+      changeMode // methods:切换播放模式的函数
+    } = useMode()
 
     // watch ---------------------------------
     watch(currentSong, (newSong) => {
@@ -180,6 +188,7 @@ export default {
       currentSong,
       playIconClass,
       disableBtnClass,
+      modeIcon, // 来自use-mode的计算属性
       // ref
       audioRef,
       // methods
@@ -189,7 +198,8 @@ export default {
       playPrev,
       playNext,
       onSongReady,
-      onSongError
+      onSongError,
+      changeMode
     }
   }
 }
