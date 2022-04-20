@@ -24,15 +24,15 @@
             <i class="icon-sequence"/>
           </div>
           <div class="icon i-left">
-            <i class="icon-prev"/>
+            <i class="icon-prev" v-on:click="playPrev"/>
           </div>
           <!-- 中间按钮 -->
-          <div class="icon i-center" v-on:click="togglePlay">
-            <i v-bind:class="playIconClass"/>
+          <div class="icon i-center">
+            <i v-bind:class="playIconClass" v-on:click="togglePlay"/>
           </div>
           <!-- 右侧按钮 -->
           <div class="icon i-right">
-            <i class="icon-next"/>
+            <i class="icon-next" v-on:click="playNext"/>
           </div>
           <div class="icon i-right">
             <i class="icon-not-favorite"/>
@@ -56,6 +56,8 @@ export default {
     const isFullScreen = computed(() => store.state.isFullScreen)
     const isPlaying = computed(() => store.state.isPlaying)
     const currentSong = computed(() => store.getters.currentSong)
+    const currentIndex = computed(() => store.state.currentIndex)
+    const playList = computed(() => store.state.playList)
     const playIconClass = computed(() => {
       return isPlaying.value ? 'icon-pause' : 'icon-play'
     })
@@ -76,15 +78,69 @@ export default {
     })
 
     // methods ---------------------------------
+    // 左上角返回按钮使用
     function goBack () {
       store.commit('setIsFullScreen', false)
     }
+    // 播放键使用，切换播放/暂停状态
     function togglePlay () {
       store.commit('setIsPlaying', !isPlaying.value)
     }
+    // audio dom的原生事件pause，有时可能audio因其他原因暂停了，但isPlaying状态没有同步修改造成出错
     function onAudioPause () {
-      // audio dom的原生事件pause，有时可能audio因其他原因暂停了，但isPlaying状态没有同步修改造成出错
       store.commit('setIsPlaying', false)
+    }
+    // 播放上一首歌
+    function playPrev () {
+      const list = playList.value
+      let newIndex = currentIndex.value - 1
+
+      // 特殊情况
+      if (!list.length) {
+        return
+      }
+      if (list.length === 1) {
+        replay()
+        return
+      }
+
+      if (newIndex < 0) {
+        newIndex = list.length - 1
+      }
+      store.commit('setCurrentIndex', newIndex)
+      // 如果点击播放上一首歌时为暂停状态，需要取消暂停
+      if (!isPlaying.value) {
+        store.commit('setIsPlaying', true)
+      }
+    }
+    // 播放下一首歌
+    function playNext () {
+      const list = playList.value
+      let newIndex = currentIndex.value + 1
+
+      // 特殊情况
+      if (!list.length) {
+        return
+      }
+      if (list.length === 1) {
+        replay()
+        return
+      }
+
+      if (newIndex >= list.length) {
+        newIndex = 0
+      }
+      store.commit('setCurrentIndex', newIndex)
+      // 如果点击播放上一首歌时为暂停状态，需要取消暂停
+      if (!isPlaying.value) {
+        store.commit('setIsPlaying', true)
+      }
+    }
+    // 重新开始播放当前歌曲
+    function replay () {
+      const audioEl = audioRef.value
+      audioEl.currentTime = 0
+      audioEl.play()
     }
 
     return {
@@ -97,7 +153,9 @@ export default {
       // methods
       goBack,
       togglePlay,
-      onAudioPause
+      onAudioPause,
+      playPrev,
+      playNext
     }
   }
 }
