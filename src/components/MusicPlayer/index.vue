@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <audio ref="audioRef"/>
+    <audio ref="audioRef" v-on:pause="onAudioPause"/>
   </div>
 </template>
 
@@ -61,6 +61,7 @@ export default {
     })
     const audioRef = ref(null)
 
+    // watch ---------------------------------
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return
@@ -69,6 +70,10 @@ export default {
       audioEl.src = newSong.url
       audioEl.play()
     })
+    watch(isPlaying, (newPlaying) => {
+      const audioEl = audioRef.value
+      newPlaying ? audioEl.play() : audioEl.pause()
+    })
 
     // methods ---------------------------------
     function goBack () {
@@ -76,6 +81,10 @@ export default {
     }
     function togglePlay () {
       store.commit('setIsPlaying', !isPlaying.value)
+    }
+    function onAudioPause () {
+      // audio dom的原生事件pause，有时可能audio因其他原因暂停了，但isPlaying状态没有同步修改造成出错
+      store.commit('setIsPlaying', false)
     }
 
     return {
@@ -87,7 +96,8 @@ export default {
       audioRef,
       // methods
       goBack,
-      togglePlay
+      togglePlay,
+      onAudioPause
     }
   }
 }
