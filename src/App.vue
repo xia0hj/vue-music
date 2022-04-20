@@ -1,16 +1,19 @@
 <template>
-  <app-header/>
-  <navigation-bar/>
+  <AppHeader/>
+  <NavigationBar/>
   <router-view/>
+  <MusicPlayer/>
 </template>
 
 <script>
 import AppHeader from '@/components/AppHeader'
 import NavigationBar from '@/components/NavigationBar'
+import MusicPlayer from '@/components/MusicPlayer'
 export default {
   components: {
-    'app-header': AppHeader,
-    'navigation-bar': NavigationBar
+    AppHeader,
+    NavigationBar,
+    MusicPlayer
   }
 }
 </script>
