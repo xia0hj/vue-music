@@ -13,7 +13,6 @@ export function sequentialPlay (context, { list, index }) {
 
 // 随机播放
 export function randomPlay (context, list) {
-  debugger
   context.commit('setPlayMode', PLAY_MODE.random)
   context.commit('setSequenceList', list)
   context.commit('setPlayList', shuffle(list))

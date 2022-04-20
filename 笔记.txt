@@ -74,3 +74,13 @@
   （3）mutations定义修改状态的函数，必须同步执行，this.$store.commit(mut_name, payload)
   （4）Actions可提交多个mutation且可以异步执行，this.$store.dispatch(act_name, payload)
   （5）mapActions/mapMutations 可在组件中将this.$store.commit()映射为this.xxx()，注意xxx方法名不要与methods中其他方法重名
+
+2022/4/20
+一些总结
+BaseScroll会往外派发triggerScroll事件，BaseScroll的ref.betterScroll可获取实例
+BaseSongList当点击某一首歌时，会往外派发selectItem事件，传出参数song和index
+MusicList：
+  1.左上角的返回按钮，this.$router.back()
+  2.BaseScroll包裹BaseSongList，并在滚动时记录scrollY
+  3.背景图片，当往上滚动时修改图片的模糊滤镜，滚动到顶部时修改背景图片div的z-index让顶部标题不被列表遮挡，随机播放按钮
+  4.缓存当前歌手信息

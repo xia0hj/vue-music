@@ -37,7 +37,7 @@
       v-loading="isLoading"
       v-no-result:[noResultText]="isNoResult"
       v-bind:probeType="3"
-      v-on:emitScroll="onScroll"
+      v-on:triggerScroll="onScroll"
     >
       <div class="song-list-wrapper">
         <BaseSongList

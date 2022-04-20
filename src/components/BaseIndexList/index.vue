@@ -2,7 +2,7 @@
   <BaseScroll
     class="index-list"
     v-bind:probeType="3"
-    v-on:emitScroll="onScroll"
+    v-on:triggerScroll="onScroll"
     ref="scrollRef"
   >
     <ul ref="groupRef">
