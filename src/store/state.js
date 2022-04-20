@@ -6,7 +6,8 @@ const state = {
   isPlaying: false, // 播放状态
   playMode: PLAY_MODE.sequence, // 播放模式，默认顺序播放
   currentIndex: 0,
-  isFullScreen: false
+  isFullScreen: false,
+  favoriteList: []
 }
 
 export default state

@@ -59,14 +59,19 @@ import useMode from './use-mode'
 export default {
   name: 'MusicPlayer',
   setup () {
+    // data ---------------------------------
     const isSongReady = ref(false)
     const audioRef = ref(null)
+
+    // vuex ---------------------------------
     const store = useStore()
     const isFullScreen = computed(() => store.state.isFullScreen)
     const isPlaying = computed(() => store.state.isPlaying)
     const currentSong = computed(() => store.getters.currentSong)
     const currentIndex = computed(() => store.state.currentIndex)
     const playList = computed(() => store.state.playList)
+
+    // computed ---------------------------------
     const playIconClass = computed(() => {
       return isPlaying.value ? 'icon-pause' : 'icon-play'
     })
@@ -75,7 +80,7 @@ export default {
       return isSongReady.value ? '' : 'disable'
     })
 
-    // 钩子函数
+    // hooks
     const {
       modeIcon, // computed:当前播放模式的按钮图标
       changeMode // methods:切换播放模式的函数
