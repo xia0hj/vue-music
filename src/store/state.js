@@ -1,4 +1,5 @@
-import { PLAY_MODE } from '@/assets/js/constant'
+import { PLAY_MODE, FAVORITE_KEY } from '@/assets/js/constant'
+import { getValueArray } from '@/assets/js/web-storage'
 
 const state = {
   sequenceList: [], // 要播放的歌曲列表
@@ -7,7 +8,7 @@ const state = {
   playMode: PLAY_MODE.sequence, // 播放模式，默认顺序播放
   currentIndex: 0,
   isFullScreen: false,
-  favoriteList: []
+  favoriteList: getValueArray(FAVORITE_KEY)
 }
 
 export default state

@@ -87,3 +87,4 @@ MusicList：
 
 1.audio标签有一个加载过程，加载完成后会派发canplay事件
 2.chrome控制台可模拟网速慢的情况，Network中将No throttling改为3G或自定义
+3.将收藏列表数据保存到vuex和localStorage中，注意vuex的初始状态也要从localStorage中读取，否则一刷新后初始状态有误

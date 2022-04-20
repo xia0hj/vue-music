@@ -35,7 +35,7 @@
             <i class="icon-next" v-on:click="playNext"/>
           </div>
           <div class="icon i-right">
-            <i class="icon-not-favorite"/>
+            <i v-bind:class="getFavoriteIconClass(currentSong)" v-on:click="toggleFavorite(currentSong)"/>
           </div>
         </div>
       </div>
@@ -55,6 +55,7 @@ import { useStore } from 'vuex'
 import { computed, watch, ref } from 'vue'
 
 import useMode from './use-mode'
+import useFavorite from './use-favorite'
 
 export default {
   name: 'MusicPlayer',
@@ -85,6 +86,11 @@ export default {
       modeIcon, // computed:当前播放模式的按钮图标
       changeMode // methods:切换播放模式的函数
     } = useMode()
+
+    const {
+      getFavoriteIconClass, // methods:获取当前收藏按钮样式class的函数
+      toggleFavorite // methods:切换收藏/不收藏当前歌曲
+    } = useFavorite()
 
     // watch ---------------------------------
     watch(currentSong, (newSong) => {
@@ -204,7 +210,9 @@ export default {
       playNext,
       onSongReady,
       onSongError,
-      changeMode
+      changeMode,
+      getFavoriteIconClass, // 获取当前收藏按钮样式class的函数,参数:currentSong,
+      toggleFavorite // 切换收藏/不收藏当前歌曲的函数,参数:currentSong,
     }
   }
 }

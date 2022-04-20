@@ -1,12 +1,13 @@
 import { useStore } from 'vuex'
 import { computed } from 'vue'
 
-import { unshiftItem } from '@/assets/js/web-storage'
+import { unshiftItem, removeItem } from '@/assets/js/web-storage'
 import { FAVORITE_KEY } from '@/assets/js/constant'
 
 export default function useFavorite () {
   const store = useStore()
   const favoriteList = computed(() => store.state.favoriteList)
+  const maxListLength = 100
 
   // 判断歌曲是否已收藏，返回相应的图标class
   function getFavoriteIconClass (song) {
@@ -17,9 +18,13 @@ export default function useFavorite () {
   function toggleFavorite (song) {
     let newFavoriteList
     if (isFavorite(song)) {
-
+      // 从收藏列表中移除
+      newFavoriteList = removeItem(FAVORITE_KEY, (arrayItem) => {
+        return arrayItem.id === song.id
+      })
     } else {
-      newFavoriteList = unshiftItem(FAVORITE_KEY, song, (arrayItem) => {
+      // 新增至收藏列表
+      newFavoriteList = unshiftItem(FAVORITE_KEY, song, maxListLength, (arrayItem) => {
         return arrayItem.id === song.id
       })
     }
@@ -34,6 +39,7 @@ export default function useFavorite () {
   }
 
   return {
-    getFavoriteIconClass
+    getFavoriteIconClass,
+    toggleFavorite
   }
 }
