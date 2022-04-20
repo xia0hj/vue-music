@@ -16,8 +16,18 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
 
-      <!-- 底部播放控制按钮 -->
+      <!-- 底部 -->
       <div class="bottom">
+        <!-- 播放进度条 -->
+        <div class="progress-wrapper">
+          <span class="time time-l">{{ formatTime(currentTime) }}</span>
+          <div class="progress-bar-wrapper">
+            <ProgressBar/>
+          </div>
+          <span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
+        </div>
+
+        <!-- 底部播放控制按钮 -->
         <div class="operators">
           <!-- 左侧按钮 -->
           <div class="icon i-left">
@@ -46,6 +56,7 @@
       v-on:pause="onAudioPause"
       v-on:canplay="onSongReady"
       v-on:error="onSongError"
+      v-on:timeupdate="updateTime"
     />
   </div>
 </template>
@@ -56,13 +67,20 @@ import { computed, watch, ref } from 'vue'
 
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
+import { formatTime } from '@/assets/js/utils'
+
+import ProgressBar from './progress/ProgressBar'
 
 export default {
   name: 'MusicPlayer',
+  components: {
+    ProgressBar
+  },
   setup () {
     // data ---------------------------------
     const isSongReady = ref(false)
     const audioRef = ref(null)
+    const currentTime = ref(0)
 
     // vuex ---------------------------------
     const store = useStore()
@@ -79,6 +97,9 @@ export default {
     const disableBtnClass = computed(() => {
       // 如果audio正在加载歌曲，为上一首/下一首/播放按钮添加禁用样式
       return isSongReady.value ? '' : 'disable'
+    })
+    const curProgress = computed(() => {
+      return currentTime.value / currentSong.value.duration
     })
 
     // hooks
@@ -98,6 +119,7 @@ export default {
         return
       }
       isSongReady.value = false
+      currentTime.value = 0
       const audioEl = audioRef.value
       audioEl.src = newSong.url
       audioEl.play()
@@ -192,6 +214,10 @@ export default {
       isSongReady.value = true
       console.warn('audio加载歌曲出错,当前歌曲=', currentSong)
     }
+    // audio通知歌曲播放时间
+    function updateTime (event) {
+      currentTime.value = event.target.currentTime
+    }
 
     return {
       // 计算属性
@@ -200,6 +226,8 @@ export default {
       playIconClass,
       disableBtnClass,
       modeIcon, // 来自use-mode的计算属性
+      curProgress,
+      currentTime,
       // ref
       audioRef,
       // methods
@@ -212,7 +240,9 @@ export default {
       onSongError,
       changeMode,
       getFavoriteIconClass, // 获取当前收藏按钮样式class的函数,参数:currentSong,
-      toggleFavorite // 切换收藏/不收藏当前歌曲的函数,参数:currentSong,
+      toggleFavorite, // 切换收藏/不收藏当前歌曲的函数,参数:currentSong
+      updateTime,
+      formatTime // utils.js中用于格式化时间的工具函数
     }
   }
 }
@@ -280,6 +310,29 @@ export default {
       position: absolute;
       bottom: 50px;
       width: 100%;
+      .progress-wrapper {
+        display: flex;
+        align-items: center;
+        width: 80%;
+        margin: 0px auto;
+        padding: 10px 0;
+        .time {
+          color: $color-text;
+          font-size: $font-size-small;
+          flex: 0 0 40px;
+          line-height: 30px;
+          width: 40px;
+          &.time-l {
+            text-align: left;
+          }
+          &.time-r {
+            text-align: right;
+          }
+        }
+        .progress-bar-wrapper {
+          flex: 1;
+        }
+      }
       .operators {
         display: flex;
         align-items: center;

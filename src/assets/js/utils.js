@@ -21,3 +21,16 @@ function swap (array, idx1, idx2) {
   array[idx1] = array[idx2]
   array[idx2] = temp
 }
+
+/**
+ * 将总秒数格式化成字符串mm:ss
+ * @param {number} time
+ * @returns 格式化的时间字符串
+ */
+export function formatTime (time) {
+  time = Math.floor(time)
+  // 分钟和秒转成字符串，不足2位在前补0
+  const minute = String(Math.floor(time / 60)).padStart(2, '0')
+  const second = String(time % 60).padStart(2, '0')
+  return `${minute}:${second}`
+}
