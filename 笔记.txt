@@ -93,3 +93,4 @@ MusicList：
 2022/4/21
 1.methods中用的共享数据，且不需要在模板中实时监测的数据，可以不放到data中，直接绑定到this.xxx上，data是响应式数据有性能损耗
 2.子组件使用transfrom进行旋转时，是在父组件的旋转角度的基础上再进行旋转的
+3.npm install js-base64 --save-dev

@@ -84,6 +84,8 @@ import { computed, watch, ref } from 'vue'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import useCd from './use-cd'
+import useLyric from './use-lyric'
+
 import { formatTime } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constant'
 
@@ -138,6 +140,8 @@ export default {
       cdRef,
       cdImageRef
     } = useCd()
+
+    useLyric()
 
     // #region watch ---------------------------------
     watch(currentSong, (newSong) => {
