@@ -20,8 +20,8 @@
       <div class="middle">
         <div class="middle-l">
           <div class="cd-wrapper">
-            <div class="cd">
-              <img class="image" v-bind:src="currentSong.pic"/>
+            <div class="cd" ref="cdRef">
+              <img ref="cdImageRef" class="image" v-bind:src="currentSong.pic" v-bind:class="cdClass"/>
             </div>
           </div>
         </div>
@@ -83,6 +83,7 @@ import { computed, watch, ref } from 'vue'
 
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
+import useCd from './use-cd'
 import { formatTime } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constant'
 
@@ -132,7 +133,13 @@ export default {
       toggleFavorite // methods:切换收藏/不收藏当前歌曲
     } = useFavorite()
 
-    // watch ---------------------------------
+    const {
+      cdClass,
+      cdRef,
+      cdImageRef
+    } = useCd()
+
+    // #region watch ---------------------------------
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return
@@ -151,8 +158,9 @@ export default {
       const audioEl = audioRef.value
       newPlayingState ? audioEl.play() : audioEl.pause()
     })
+    // #endregion
 
-    // methods ---------------------------------
+    // #region methods ---------------------------------
     // 左上角返回按钮使用
     function goBack () {
       store.commit('setIsFullScreen', false)
@@ -268,6 +276,7 @@ export default {
         playNext()
       }
     }
+    // #endregion
 
     return {
       // 计算属性
@@ -278,8 +287,11 @@ export default {
       modeIcon, // 来自use-mode的计算属性
       curProgress,
       currentTime,
+      cdClass, // 决定中间cd唱片是否转动的样式class名
       // ref
       audioRef,
+      cdRef,
+      cdImageRef,
       // methods
       goBack,
       togglePlay,
@@ -393,6 +405,9 @@ export default {
               box-sizing: border-box;
               border-radius: 50%;
               border: 10px solid rgba(255, 255, 255, 0.1);
+            }
+            .playing {
+              animation: rotate 20s linear infinite; // rotate定义在base.scss中
             }
           }
         }
