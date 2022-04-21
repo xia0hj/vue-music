@@ -85,6 +85,7 @@ export default {
     const isSongReady = ref(false)
     const audioRef = ref(null)
     const currentTime = ref(0)
+    let isProgressChanging = false // 标记是否正在拖动进度条，如果是则不会根据歌曲播放自动走进度条，避免拖动时进度条来回变动
 
     // vuex ---------------------------------
     const store = useStore()
@@ -220,15 +221,21 @@ export default {
     }
     // audio通知歌曲播放时间
     function updateTime (event) {
+      // 如果正在拖动进度条，就不更新时间了
+      if (isProgressChanging) {
+        return
+      }
       currentTime.value = event.target.currentTime
     }
     // 正在拖动进度条，子组件ProgressBar派发事件progress-changing
     function onProgressChanging (newProgress) {
+      isProgressChanging = true
       // 拖动时只修改左侧的当前时间
       currentTime.value = currentSong.value.duration * newProgress
     }
     // 拖动进度条结束，子组件ProgressBar派发事件progress-change-end
     function onProgressChangeEnd (newProgress) {
+      isProgressChanging = false
       // 拖动结束后才修改播放进度，且如果是暂停状态会改为播放
       const newCurrentTime = currentSong.value.duration * newProgress
       currentTime.value = newCurrentTime
