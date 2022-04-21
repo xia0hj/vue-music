@@ -1,5 +1,5 @@
 <template>
-  <div class="progress-bar">
+  <div class="progress-bar" v-on:click="onClick">
     <div class="bar-inner">
       <!-- 左侧已走过的进度 -->
       <div class="progress" v-bind:style="progressStyle" ref="progressRef"/>
@@ -67,13 +67,21 @@ export default {
       const newProgressWidth = touchStartRecord.startProgressWidth + xDelta // 计算得新的已走进度条宽度
       const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
       const newProgress = Math.min(1, Math.max(0, newProgressWidth / barWidth)) // 将新的进度百分比限制在0到1之间
-      // this.$data.btnOffset = barWidth * newProgress
+      // this.$data.btnOffset = barWidth * newProgress 不需要在这里修改curProgress，而是派发事件让父组件去修改当前组件的props
       this.$emit('progress-changing', newProgress)
     },
     onTouchEnd: function () {
       const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
       const curProgress = this.$refs.progressRef.clientWidth / barWidth
       this.$emit('progress-change-end', curProgress)
+    },
+    onClick: function (event) {
+      // 点击位置的x减去进度条最左侧的x
+      const rect = this.$el.getBoundingClientRect()
+      const newProgressWidth = event.pageX - rect.left
+      const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
+      const newProgress = Math.min(1, Math.max(0, newProgressWidth / barWidth)) // 将新的进度百分比限制在0到1之间
+      this.$emit('progress-change-end', newProgress)
     }
   }
 }
