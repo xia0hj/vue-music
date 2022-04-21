@@ -18,13 +18,30 @@
 
       <!-- 中间 -->
       <div class="middle">
-        <div class="middle-l">
+        <!-- 中间旋转的cd封面 -->
+        <div class="middle-l" hidden="hidden">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img ref="cdImageRef" class="image" v-bind:src="currentSong.pic" v-bind:class="cdClass"/>
             </div>
           </div>
         </div>
+
+        <!-- 歌词滚动列表 -->
+        <BaseScroll class="middle-r" ref="lyricScrollRef">
+          <div class="lyric-wrapper">
+            <div v-if="lyricParser" ref="lyricListRef">
+              <p
+                v-for="(line, index) in lyricParser.lines"
+                v-bind:key="line.num"
+                v-bind:class="{'current': index===currentLineNum}"
+                class="text"
+              >
+                {{ line.txt }}
+              </p>
+            </div>
+          </div>
+        </BaseScroll>
       </div>
 
       <!-- 底部 -->
@@ -90,11 +107,13 @@ import { formatTime } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constant'
 
 import ProgressBar from './ProgressBar'
+import BaseScroll from '@/components/BaseScroll'
 
 export default {
   name: 'MusicPlayer',
   components: {
-    ProgressBar
+    ProgressBar,
+    BaseScroll
   },
   setup () {
     // data ---------------------------------
@@ -141,7 +160,14 @@ export default {
       cdImageRef
     } = useCd()
 
-    useLyric()
+    const {
+      lyricParser,
+      currentLineNum,
+      playLyric,
+      stopLyric,
+      lyricScrollRef,
+      lyricListRef
+    } = useLyric(isSongReady, currentTime)
 
     // #region watch ---------------------------------
     watch(currentSong, (newSong) => {
@@ -160,7 +186,13 @@ export default {
         return
       }
       const audioEl = audioRef.value
-      newPlayingState ? audioEl.play() : audioEl.pause()
+      if (newPlayingState) {
+        audioEl.play()
+        playLyric()
+      } else {
+        audioEl.pause()
+        stopLyric()
+      }
     })
     // #endregion
 
@@ -240,6 +272,7 @@ export default {
         return
       }
       isSongReady.value = true
+      playLyric() // 有可能在获取到歌词后audio还没准备好播放，所以要在准备好后再执行一次播放歌词
     }
     // audio通知加载歌曲出错，避免一直卡在isSongReady=false的状态不能切换
     function onSongError () {
@@ -259,6 +292,8 @@ export default {
       isProgressChanging = true
       // 拖动时只修改左侧的当前时间
       currentTime.value = currentSong.value.duration * newProgress
+      playLyric() // 拖动同时调整歌词位置
+      stopLyric() // 拖动时歌词暂停
     }
     // 拖动进度条结束，子组件ProgressBar派发事件progress-change-end
     function onProgressChangeEnd (newProgress) {
@@ -267,10 +302,10 @@ export default {
       const newCurrentTime = currentSong.value.duration * newProgress
       currentTime.value = newCurrentTime
       audioRef.value.currentTime = newCurrentTime
-
       if (!isPlaying.value) {
         store.commit('setIsPlaying', true)
       }
+      playLyric() // 拖动结束，同步歌词位置
     }
     // 歌曲播放结束后，根据state.playMode决定下一首
     function onSongEnd () {
@@ -292,10 +327,14 @@ export default {
       curProgress,
       currentTime,
       cdClass, // 决定中间cd唱片是否转动的样式class名
+      lyricParser, // 当前歌词
+      currentLineNum, // 当前歌词行号
       // ref
       audioRef,
       cdRef,
       cdImageRef,
+      lyricScrollRef,
+      lyricListRef,
       // methods
       goBack,
       togglePlay,
@@ -383,7 +422,7 @@ export default {
       white-space: nowrap;
       font-size: 0;
       .middle-l {
-        display: inline-block;
+        display: none;
         vertical-align: top;
         position: relative;
         width: 100%;
@@ -413,6 +452,33 @@ export default {
             .playing {
               animation: rotate 20s linear infinite; // rotate定义在base.scss中
             }
+          }
+        }
+      }
+      .middle-r {
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        .lyric-wrapper {
+          width: 80%;
+          margin: 0 auto;
+          overflow: hidden;
+          text-align: center;
+          .text {
+            line-height: 32px;
+            color: $color-text-l;
+            font-size: $font-size-medium;
+            &.current {
+              color: $color-text;
+            }
+          }
+          .pure-music {
+            padding-top: 50%;
+            line-height: 32px;
+            color: $color-text-l;
+            font-size: $font-size-medium;
           }
         }
       }
