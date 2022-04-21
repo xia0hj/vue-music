@@ -31,11 +31,7 @@ export default {
   emits: ['progress-changing', 'progress-change-end'],
   data: function () {
     return {
-      btnOffset: 0,
-      touchStartRecord: {
-        startX: 0, // 拖动开始时的触摸起始x
-        startProgressWidth: 0 // 拖动开始时的已走进度条宽度
-      }
+      btnOffset: 0
     }
   },
   computed: {
@@ -53,16 +49,17 @@ export default {
     }
   },
   created: function () {
-    // this.touchRecord = {} // 记录拖动进度条的数据
+    this.touchStartRecord = {} // 记录拖动进度条的初始数据
+    // 为什么不定义到data，如果是<template/>中需要监测的数据才需要放到data，放到data中变成响应式有性能浪费
   },
   methods: {
     onTouchStart: function (event) {
-      const touchStartRecord = this.$data.touchStartRecord
+      const touchStartRecord = this.touchStartRecord
       touchStartRecord.startX = event.touches[0].pageX
       touchStartRecord.startProgressWidth = this.$refs.progressRef.clientWidth
     },
     onTouchMove: function (event) {
-      const touchStartRecord = this.$data.touchStartRecord
+      const touchStartRecord = this.touchStartRecord
       const xDelta = event.touches[0].pageX - touchStartRecord.startX // 先计算touch move的x轴坐标变化
       const newProgressWidth = touchStartRecord.startProgressWidth + xDelta // 计算得新的已走进度条宽度
       const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度

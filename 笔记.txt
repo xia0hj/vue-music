@@ -89,3 +89,6 @@ MusicList：
 2.chrome控制台可模拟网速慢的情况，Network中将No throttling改为3G或自定义
 3.将收藏列表数据保存到vuex和localStorage中，注意vuex的初始状态也要从localStorage中读取，否则一刷新后初始状态有误
 4.this.$el取vue实例挂载的dom节点
+
+2022/4/21
+1.methods中用的共享数据，且不需要在模板中实时监测的数据，可以不放到data中，直接绑定到this.xxx上，data是响应式数据有性能损耗
