@@ -61,6 +61,7 @@
       v-on:canplay="onSongReady"
       v-on:error="onSongError"
       v-on:timeupdate="updateTime"
+      v-on:ended="onSongEnd"
     />
   </div>
 </template>
@@ -72,6 +73,7 @@ import { computed, watch, ref } from 'vue'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import { formatTime } from '@/assets/js/utils'
+import { PLAY_MODE } from '@/assets/js/constant'
 
 import ProgressBar from './progress/ProgressBar'
 
@@ -94,6 +96,7 @@ export default {
     const currentSong = computed(() => store.getters.currentSong)
     const currentIndex = computed(() => store.state.currentIndex)
     const playList = computed(() => store.state.playList)
+    const playMode = computed(() => store.state.playMode)
 
     // computed ---------------------------------
     const playIconClass = computed(() => {
@@ -206,6 +209,7 @@ export default {
       const audioEl = audioRef.value
       audioEl.currentTime = 0
       audioEl.play()
+      store.commit('setIsPlaying', true)
     }
     // audio通知可播放
     function onSongReady () {
@@ -245,6 +249,14 @@ export default {
         store.commit('setIsPlaying', true)
       }
     }
+    // 歌曲播放结束后，根据state.playMode决定下一首
+    function onSongEnd () {
+      if (playMode.value === PLAY_MODE.loop) {
+        replay()
+      } else {
+        playNext()
+      }
+    }
 
     return {
       // 计算属性
@@ -271,7 +283,8 @@ export default {
       updateTime,
       formatTime, // utils.js中用于格式化时间的工具函数
       onProgressChanging, // 正在拖动进度条，子组件ProgressBar派发事件progress-changing
-      onProgressChangeEnd // 拖动进度条结束，子组件ProgressBar派发事件progress-change-end
+      onProgressChangeEnd, // 拖动进度条结束，子组件ProgressBar派发事件progress-change-end
+      onSongEnd // 歌曲播放结束后，根据state.playMode决定下一首
     }
   }
 }
