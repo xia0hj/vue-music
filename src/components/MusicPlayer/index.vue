@@ -22,7 +22,11 @@
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
-            <ProgressBar/>
+            <ProgressBar
+              v-bind:curProgress="curProgress"
+              v-on:progress-changing="onProgressChanging"
+              v-on:progress-change-end="onProgressChangeEnd"
+            />
           </div>
           <span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
         </div>
@@ -218,6 +222,22 @@ export default {
     function updateTime (event) {
       currentTime.value = event.target.currentTime
     }
+    // 正在拖动进度条，子组件ProgressBar派发事件progress-changing
+    function onProgressChanging (newProgress) {
+      // 拖动时只修改左侧的当前时间
+      currentTime.value = currentSong.value.duration * newProgress
+    }
+    // 拖动进度条结束，子组件ProgressBar派发事件progress-change-end
+    function onProgressChangeEnd (newProgress) {
+      // 拖动结束后才修改播放进度，且如果是暂停状态会改为播放
+      const newCurrentTime = currentSong.value.duration * newProgress
+      currentTime.value = newCurrentTime
+      audioRef.value.currentTime = newCurrentTime
+
+      if (!isPlaying.value) {
+        store.commit('setIsPlaying', true)
+      }
+    }
 
     return {
       // 计算属性
@@ -242,7 +262,9 @@ export default {
       getFavoriteIconClass, // 获取当前收藏按钮样式class的函数,参数:currentSong,
       toggleFavorite, // 切换收藏/不收藏当前歌曲的函数,参数:currentSong
       updateTime,
-      formatTime // utils.js中用于格式化时间的工具函数
+      formatTime, // utils.js中用于格式化时间的工具函数
+      onProgressChanging, // 正在拖动进度条，子组件ProgressBar派发事件progress-changing
+      onProgressChangeEnd // 拖动进度条结束，子组件ProgressBar派发事件progress-change-end
     }
   }
 }

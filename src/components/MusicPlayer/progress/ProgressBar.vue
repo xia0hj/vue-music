@@ -2,9 +2,14 @@
   <div class="progress-bar">
     <div class="bar-inner">
       <!-- 左侧已走过的进度 -->
-      <div class="progress" v-bind:style="progressStyle"/>
+      <div class="progress" v-bind:style="progressStyle" ref="progressRef"/>
       <!-- 进度条上的按钮 -->
-      <div class="progress-btn-wrapper">
+      <div
+        class="progress-btn-wrapper"
+        v-on:touchstart.prevent="onTouchStart"
+        v-on:touchmove.prevent="onTouchMove"
+        v-on:touchend.prevent="onTouchEnd"
+      >
         <div class="progress-btn" v-bind:style="btnStyle"/>
       </div>
     </div>
@@ -12,18 +17,25 @@
 </template>
 
 <script>
+
 const PROGRESS_BTN_WIDTH = 16
 export default {
   name: 'ProgressBar',
   props: {
-    progress: {
+    // 播放进度百分比,大小区间0~1
+    curProgress: {
       type: Number,
       default: 0
     }
   },
+  emits: ['progress-changing', 'progress-change-end'],
   data: function () {
     return {
-      btnOffset: 0
+      btnOffset: 0,
+      touchStartRecord: {
+        startX: 0, // 拖动开始时的触摸起始x
+        startProgressWidth: 0 // 拖动开始时的已走进度条宽度
+      }
     }
   },
   computed: {
@@ -35,9 +47,33 @@ export default {
     }
   },
   watch: {
-    progress: function (newProgress, oldProgress) {
-      const barWidth = this.$el.clientHeight - PROGRESS_BTN_WIDTH // 整个进度条的宽度
+    curProgress: function (newProgress, oldProgress) {
+      const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
       this.$data.btnOffset = newProgress * barWidth
+    }
+  },
+  created: function () {
+    // this.touchRecord = {} // 记录拖动进度条的数据
+  },
+  methods: {
+    onTouchStart: function (event) {
+      const touchStartRecord = this.$data.touchStartRecord
+      touchStartRecord.startX = event.touches[0].pageX
+      touchStartRecord.startProgressWidth = this.$refs.progressRef.clientWidth
+    },
+    onTouchMove: function (event) {
+      const touchStartRecord = this.$data.touchStartRecord
+      const xDelta = event.touches[0].pageX - touchStartRecord.startX // 先计算touch move的x轴坐标变化
+      const newProgressWidth = touchStartRecord.startProgressWidth + xDelta // 计算得新的已走进度条宽度
+      const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
+      const newProgress = Math.min(1, Math.max(0, newProgressWidth / barWidth)) // 将新的进度百分比限制在0到1之间
+      // this.$data.btnOffset = barWidth * newProgress
+      this.$emit('progress-changing', newProgress)
+    },
+    onTouchEnd: function () {
+      const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
+      const curProgress = this.$refs.progressRef.clientWidth / barWidth
+      this.$emit('progress-change-end', curProgress)
     }
   }
 }
