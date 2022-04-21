@@ -16,3 +16,14 @@ export function processSongs (songs) {
     })
   })
 }
+
+// GET /api/getLyric 参数:{mid}
+export function getLyric (song) {
+  const { mid } = song
+
+  return getByAxios('/api/getLyric', { mid })
+    .then((result) => {
+      const lyric = result ? result.lyric : '[00:00:00]该歌曲暂时无法获取歌词'
+      return lyric
+    })
+}

@@ -3,6 +3,7 @@
 // 导入模块
 const axios = require('axios')
 const pinyin = require('pinyin')
+const Base64 = require('js-base64').Base64
 const getSecuritySign = require('./sign') // 获取签名方法
 
 // OK状态码
@@ -409,12 +410,39 @@ function registerSongsUrl (app) {
   })
 }
 
+// 注册歌词接口
+function registerLyric (app) {
+  app.get('/api/getLyric', (appRequest, appResponse) => {
+    const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+
+    getByAxios(url, {
+      '-': 'MusicJsonCallback_lrc',
+      pcachetime: +new Date(),
+      songmid: appRequest.query.mid,
+      g_tk_new_20200303: token
+    }).then((response) => {
+      const data = response.data
+      if (data.code === CODE_OK) {
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            lyric: Base64.decode(data.lyric)
+          }
+        })
+      } else {
+        appResponse.json(data)
+      }
+    })
+  })
+}
+
 // 注册后端路由
 const registerRouter = (app) => {
   registerRecommend(app)
   registerSingerList(app)
   registerSingerDetail(app)
   registerSongsUrl(app)
+  registerLyric(app)
 }
 
 module.exports = registerRouter
