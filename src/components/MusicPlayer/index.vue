@@ -68,7 +68,8 @@
               v-bind:curProgress="curProgress"
               v-on:progress-changing="onProgressChanging"
               v-on:progress-change-end="onProgressChangeEnd"
-            />
+              ref="progressBarRef"
+            ></ProgressBar>
           </div>
           <span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
         </div>
@@ -115,7 +116,7 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed, watch, ref } from 'vue'
+import { computed, watch, ref, nextTick } from 'vue'
 
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
@@ -142,6 +143,7 @@ export default {
     const isSongReady = ref(false)
     const audioRef = ref(null)
     const currentTime = ref(0)
+    const progressBarRef = ref(null)
     let isProgressChanging = false // 标记是否正在拖动进度条，如果是则不会根据歌曲播放自动走进度条，避免拖动时进度条来回变动
 
     // vuex ---------------------------------
@@ -225,6 +227,14 @@ export default {
       } else {
         audioEl.pause()
         stopLyric()
+      }
+    })
+    watch(isFullScreen, async (isFull) => {
+      // 刚切换到全屏播放器时，要手动刷新一次进度条，因为进度条计算依赖进度条dom宽度，而非全屏时dom宽度为0
+      if (isFull) {
+        // nextTick后等进度条dom更新之后再去获取dom宽度刷新进度
+        await nextTick()
+        progressBarRef.value.refreshBtnOffset(curProgress.value)
       }
     })
     // #endregion
@@ -374,6 +384,7 @@ export default {
       cdImageRef,
       lyricScrollRef,
       lyricListRef,
+      progressBarRef,
       // methods
       goBack,
       togglePlay,

@@ -44,8 +44,9 @@ export default {
   },
   watch: {
     curProgress: function (newProgress, oldProgress) {
-      const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
-      this.$data.btnOffset = newProgress * barWidth
+      // 计算进度需要获取整个进度条的dom宽度，当播放器隐藏时就会获取出错
+      // 在打开播放器页面时，要马上自动刷新一次offset
+      this.refreshBtnOffset(newProgress)
     }
   },
   created: function () {
@@ -79,6 +80,10 @@ export default {
       const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
       const newProgress = Math.min(1, Math.max(0, newProgressWidth / barWidth)) // 将新的进度百分比限制在0到1之间
       this.$emit('progress-change-end', newProgress)
+    },
+    refreshBtnOffset: function (newProgress) {
+      const barWidth = this.$el.clientWidth - PROGRESS_BTN_WIDTH // 整个进度条的宽度
+      this.$data.btnOffset = newProgress * barWidth
     }
   }
 }
