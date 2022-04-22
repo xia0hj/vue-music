@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playList.length">
     <div class="normal-player" v-show="isFullScreen">
       <!-- 背景图片 -->
       <div class="background">
@@ -97,6 +97,8 @@
       </div>
     </div>
 
+    <MiniPlayer/>
+
     <audio
       ref="audioRef"
       v-on:pause="onAudioPause"
@@ -123,12 +125,14 @@ import { PLAY_MODE } from '@/assets/js/constant'
 
 import ProgressBar from './ProgressBar'
 import BaseScroll from '@/components/BaseScroll'
+import MiniPlayer from './MiniPlayer'
 
 export default {
   name: 'MusicPlayer',
   components: {
     ProgressBar,
-    BaseScroll
+    BaseScroll,
+    MiniPlayer
   },
   setup () {
     // data ---------------------------------
@@ -360,7 +364,7 @@ export default {
       touchMoveResult, // 中间层当前应该显示的cd或lyric
       middleLeftStyle, // 拖动时中间层cd的style
       middleRightStyle, // 拖动时中间层lyric的style
-
+      playList,
       // ref
       audioRef,
       cdRef,
