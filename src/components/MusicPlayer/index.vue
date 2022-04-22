@@ -18,18 +18,23 @@
 
       <!-- 中间 -->
       <div class="middle">
-        <!-- 中间旋转的cd封面 -->
-        <div class="middle-l" hidden="hidden">
+        <!-- 中间旋转的cd封面和正在播放的那一句歌词 -->
+        <div class="middle-l">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img ref="cdImageRef" class="image" v-bind:src="currentSong.pic" v-bind:class="cdClass"/>
             </div>
+          </div>
+          <div class="showing-lyric-wrapper">
+            <div class="showing-lyric">{{ showingLyric }}</div>
           </div>
         </div>
 
         <!-- 歌词滚动列表 -->
         <BaseScroll class="middle-r" ref="lyricScrollRef">
           <div class="lyric-wrapper">
+
+            <!-- 滚动歌词 -->
             <div v-if="lyricParser" ref="lyricListRef">
               <p
                 v-for="(line, index) in lyricParser.lines"
@@ -40,6 +45,12 @@
                 {{ line.txt }}
               </p>
             </div>
+
+            <!-- 纯音乐无歌词 -->
+            <div class="pure-music" v-show="pureMusicLyric">
+              <p>{{ pureMusicLyric }}</p>
+            </div>
+
           </div>
         </BaseScroll>
       </div>
@@ -163,6 +174,8 @@ export default {
     const {
       lyricParser,
       currentLineNum,
+      pureMusicLyric, // 如果不是纯音乐则为空串，如果是纯音乐则返回对应的提示
+      showingLyric, // 在旋转cd下面显示的正在播放的那一句歌词
       playLyric,
       stopLyric,
       lyricScrollRef,
@@ -329,6 +342,8 @@ export default {
       cdClass, // 决定中间cd唱片是否转动的样式class名
       lyricParser, // 当前歌词
       currentLineNum, // 当前歌词行号
+      pureMusicLyric, // 如果不是纯音乐则为空串，如果是纯音乐则返回对应的提示
+      showingLyric, // 在旋转cd下面显示的正在播放的那一句歌词
       // ref
       audioRef,
       cdRef,
@@ -422,7 +437,7 @@ export default {
       white-space: nowrap;
       font-size: 0;
       .middle-l {
-        display: none;
+        display: inline-block;
         vertical-align: top;
         position: relative;
         width: 100%;
@@ -452,6 +467,18 @@ export default {
             .playing {
               animation: rotate 20s linear infinite; // rotate定义在base.scss中
             }
+          }
+        }
+        .showing-lyric-wrapper {
+          width: 80%;
+          margin: 30px auto 0 auto;
+          overflow: hidden;
+          text-align: center;
+          .showing-lyric {
+            height: 20px;
+            line-height: 20px;
+            font-size: $font-size-medium;
+            color: $color-text-l;
           }
         }
       }

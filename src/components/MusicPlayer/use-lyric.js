@@ -15,6 +15,8 @@ export default function useLyric (isSongReady, currentTime) {
 
   const lyricParser = ref(null)
   const currentLineNum = ref(0)
+  const pureMusicLyric = ref('')
+  const showingLyric = ref('') // 在旋转cd下面显示的正在播放的那一句歌词
 
   const lyricScrollRef = ref(null)
   const lyricListRef = ref(null)
@@ -28,6 +30,8 @@ export default function useLyric (isSongReady, currentTime) {
     stopLyric()
     lyricParser.value = null
     currentLineNum.value = 0
+    pureMusicLyric.value = ''
+    showingLyric.value = ''
 
     const lyric = await getLyric(newSong)
     store.commit('addSongLyric', {
@@ -43,14 +47,25 @@ export default function useLyric (isSongReady, currentTime) {
     lyricParser.value = new Lyric(lyric, handleLyric)
     console.log('LyricParser: ', lyricParser.value)
 
-    // 歌曲正在播放，需要自动调整歌词
-    if (isSongReady.value) {
-      playLyric()
+    // 有歌词
+    if (lyricParser.value.lines.length) {
+      // 歌曲正在播放，需要自动调整歌词
+      if (isSongReady.value) {
+        playLyric()
+      }
+    } else {
+      // 是纯音乐，需要去掉歌词前的时间戳[00:00:00]
+      const pureMusicText = lyric.replace(/\[(\d{2}):(\d{2}):(\d{2})\]/g, '')
+      pureMusicLyric.value = pureMusicText
+      showingLyric.value = pureMusicText
     }
   })
 
-  function handleLyric ({ lineNum }) {
+  function handleLyric ({ lineNum, txt }) {
+    // LyricParser返回的当前行号和当前歌词文本
     currentLineNum.value = lineNum
+    showingLyric.value = txt
+
     const scrollComponent = lyricScrollRef.value
     const lyricEl = lyricListRef.value
     if (!lyricEl) {
@@ -85,6 +100,8 @@ export default function useLyric (isSongReady, currentTime) {
   return {
     lyricParser,
     currentLineNum,
+    pureMusicLyric,
+    showingLyric,
     playLyric,
     stopLyric,
     lyricScrollRef,
