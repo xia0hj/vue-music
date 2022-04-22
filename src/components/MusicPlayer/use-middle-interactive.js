@@ -10,20 +10,41 @@ export default function useMiddleInteractive () {
 
   const touchRecord = {
     startX: 0,
-    deltaX: 0,
-    lyricOffsetPercent: 0
+    lyricOffsetPercent: 0,
+    startY: 0,
+    moveDir: '' // 一次拖动只能是左右移动cd和lyric，或者是lyric上下滚动
   }
 
   function onMiddleTouchStart (e) {
     touchRecord.startX = e.touches[0].pageX
+    touchRecord.startY = e.touches[0].pageY
+    touchRecord.moveDir = ''
+    console.log('start :', touchRecord)
   }
 
   function onMiddleTouchMove (e) {
-    touchRecord.deltaX = e.touches[0].pageX - touchRecord.startX
+    const deltaX = e.touches[0].pageX - touchRecord.startX
+    const deltaY = e.touches[0].pageY - touchRecord.startY
+
+    console.log(touchRecord)
+
+    // 如果本次移动方向是垂直，说明是在进行歌词上下滚动，则不切换页面
+    if (!touchRecord.moveDir) {
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        touchRecord.moveDir = 'horizontal'
+      } else {
+        touchRecord.moveDir = 'vertical'
+      }
+    }
+
+    if (touchRecord.moveDir === 'vertical') {
+      return
+    }
+
     // 默认状态cd在中间lyric在cd的右侧，设此时lyric的x偏移是0；当lyric拖动中间后，lyric就往左移动了-innerWidth
     const lyricTranslateX = (curShowPage === 'cd' ? 0 : -window.innerWidth)
     // 拖动期间lyric相对于默认位置的位移，在-innerWidth到0之间
-    const lyricOffsetX = limitBetween(lyricTranslateX + touchRecord.deltaX, -window.innerWidth, 0)
+    const lyricOffsetX = limitBetween(lyricTranslateX + deltaX, -window.innerWidth, 0)
     // 拖动期间lyric相对于默认位置的位移占窗口宽度的比例
     touchRecord.lyricOffsetPercent = Math.abs(lyricOffsetX / window.innerWidth)
 
