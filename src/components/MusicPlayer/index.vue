@@ -1,9 +1,6 @@
 <template>
   <div class="player">
-    <div
-      class="normal-player"
-      v-show="isFullScreen"
-    >
+    <div class="normal-player" v-show="isFullScreen">
       <!-- 背景图片 -->
       <div class="background">
         <img v-bind:src="currentSong.pic"/>
@@ -17,9 +14,9 @@
       </div>
 
       <!-- 中间 -->
-      <div class="middle">
+      <div class="middle" v-on:touchstart.prevent="onMiddleTouchStart" v-on:touchmove.prevent="onMiddleTouchMove" v-on:touchend.prevent="onMiddleTouchEnd">
         <!-- 中间旋转的cd封面和正在播放的那一句歌词 -->
-        <div class="middle-l">
+        <div class="middle-l" v-bind:style="middleLeftStyle">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img ref="cdImageRef" class="image" v-bind:src="currentSong.pic" v-bind:class="cdClass"/>
@@ -31,7 +28,7 @@
         </div>
 
         <!-- 歌词滚动列表 -->
-        <BaseScroll class="middle-r" ref="lyricScrollRef">
+        <BaseScroll class="middle-r" ref="lyricScrollRef" v-bind:style="middleRightStyle">
           <div class="lyric-wrapper">
 
             <!-- 滚动歌词 -->
@@ -57,6 +54,12 @@
 
       <!-- 底部 -->
       <div class="bottom">
+        <!-- 底部表示正在显示cd还是歌词的小圆点 -->
+        <div class="dot-wrapper">
+          <span class="dot" v-bind:class="{'active': touchMoveResult==='cd'}"/>
+          <span class="dot" v-bind:class="{'active': touchMoveResult==='lyric'}"/>
+        </div>
+
         <!-- 播放进度条 -->
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
@@ -113,6 +116,7 @@ import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import useCd from './use-cd'
 import useLyric from './use-lyric'
+import useMiddleInteractive from './use-middle-interactive'
 
 import { formatTime } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constant'
@@ -181,6 +185,15 @@ export default {
       lyricScrollRef,
       lyricListRef
     } = useLyric(isSongReady, currentTime)
+
+    const {
+      touchMoveResult,
+      middleLeftStyle,
+      middleRightStyle,
+      onMiddleTouchStart,
+      onMiddleTouchMove,
+      onMiddleTouchEnd
+    } = useMiddleInteractive()
 
     // #region watch ---------------------------------
     watch(currentSong, (newSong) => {
@@ -344,6 +357,10 @@ export default {
       currentLineNum, // 当前歌词行号
       pureMusicLyric, // 如果不是纯音乐则为空串，如果是纯音乐则返回对应的提示
       showingLyric, // 在旋转cd下面显示的正在播放的那一句歌词
+      touchMoveResult, // 中间层当前应该显示的cd或lyric
+      middleLeftStyle, // 拖动时中间层cd的style
+      middleRightStyle, // 拖动时中间层lyric的style
+
       // ref
       audioRef,
       cdRef,
@@ -365,7 +382,10 @@ export default {
       formatTime, // utils.js中用于格式化时间的工具函数
       onProgressChanging, // 正在拖动进度条，子组件ProgressBar派发事件progress-changing
       onProgressChangeEnd, // 拖动进度条结束，子组件ProgressBar派发事件progress-change-end
-      onSongEnd // 歌曲播放结束后，根据state.playMode决定下一首
+      onSongEnd, // 歌曲播放结束后，根据state.playMode决定下一首
+      onMiddleTouchStart,
+      onMiddleTouchMove,
+      onMiddleTouchEnd
     }
   }
 }
@@ -514,6 +534,24 @@ export default {
       position: absolute;
       bottom: 50px;
       width: 100%;
+      .dot-wrapper {
+        text-align: center;
+        font-size: 0;
+        .dot {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 4px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: $color-text-l;
+          &.active {
+            width: 20px;
+            border-radius: 5px;
+            background: $color-text-ll;
+          }
+        }
+      }
       .progress-wrapper {
         display: flex;
         align-items: center;

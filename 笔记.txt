@@ -97,3 +97,6 @@ MusicList：
 4.npm install lyric-parser --save
 5.有可能获取到歌词后audio还没准备好播放，所以要在获取到歌词后和audio准备好播放后都执行开始滚动歌词
 6.切换歌曲时可能会在新歌词拿到前就开始播放了，导致去滚动旧的歌词，所以一旦切换要先重置
+
+2022/4/22
+1.如果chrome中发现div的style与v-bind:style中的不一致，考虑是否key写错

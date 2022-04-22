@@ -34,3 +34,14 @@ export function formatTime (time) {
   const second = String(time % 60).padStart(2, '0')
   return `${minute}:${second}`
 }
+
+/**
+ * 如果当前值超出范围，则范围最小/最大值
+ * @param {number} curVal 当前值
+ * @param {number} minVal 最小值
+ * @param {number} maxVal 最大值
+ * @returns 调整在范围内的当前值
+ */
+export function limitBetween (curVal, minVal, maxVal) {
+  return Math.min(maxVal, Math.max(minVal, curVal))
+}
