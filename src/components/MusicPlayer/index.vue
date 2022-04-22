@@ -97,7 +97,10 @@
       </div>
     </div>
 
-    <MiniPlayer/>
+    <MiniPlayer
+      v-bind:progress="curProgress"
+      v-bind:togglePlay="togglePlay"
+    />
 
     <audio
       ref="audioRef"

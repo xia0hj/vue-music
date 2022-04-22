@@ -13,6 +13,21 @@
         <h2 class="name">{{ currentSong.name }}</h2>
         <p class="desc">{{ currentSong.singer }}</p>
       </div>
+
+      <!-- 控制按钮 -->
+      <div class="control">
+        <ProgressCircle
+          v-bind:radius="32"
+          v-bind:progress="progress"
+        >
+          <i
+            class="icon-mini"
+            v-bind:class="miniPlayIcon"
+            @click.stop="togglePlay"
+          >
+          </i>
+        </ProgressCircle>
+      </div>
     </div>
   </transition>
 </template>
@@ -23,12 +38,29 @@ import { computed } from 'vue'
 
 import useCd from './use-cd'
 
+import ProgressCircle from './ProgressCircle'
+
 export default {
   name: 'MiniPlayer',
+  components: {
+    ProgressCircle
+  },
+  props: {
+    progress: {
+      type: Number,
+      default: 0
+    },
+    togglePlay: Function
+  },
   setup: function () {
     const store = useStore()
     const isFullScreen = computed(() => store.state.isFullScreen)
     const currentSong = computed(() => store.getters.currentSong)
+    const isPlaying = computed(() => store.state.isPlaying)
+
+    const miniPlayIcon = computed(() => {
+      return isPlaying.value ? 'icon-pause-mini' : 'icon-play-mini'
+    })
 
     const {
       cdClass,
@@ -45,11 +77,13 @@ export default {
       isFullScreen,
       currentSong,
       cdClass,
+      isPlaying,
+      miniPlayIcon, // 播放按钮图标的样式class
       // ref
       cdRef,
       cdImageRef,
       // methods
-      showNormalPlayer
+      showNormalPlayer // 切换全屏的函数
     }
   }
 }
