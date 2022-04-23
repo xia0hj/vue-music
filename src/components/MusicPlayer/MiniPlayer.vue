@@ -8,10 +8,18 @@
         </div>
       </div>
 
-      <!-- 歌曲信息 -->
-      <div>
-        <h2 class="name">{{ currentSong.name }}</h2>
-        <p class="desc">{{ currentSong.singer }}</p>
+      <!-- 歌曲信息,类似轮播图可滑动切换 -->
+      <div class="slider-wrapper" ref="sliderWrapperRef">
+        <div class="slider-group">
+          <div
+            class="slider-page"
+            v-for="song in playList"
+            v-bind:key="song.id"
+          >
+            <h2 class="name">{{ song.name }}</h2>
+            <p class="desc">{{ song.singer }}</p>
+          </div>
+        </div>
       </div>
 
       <!-- 控制按钮 -->
@@ -37,6 +45,7 @@ import { useStore } from 'vuex'
 import { computed } from 'vue'
 
 import useCd from './use-cd'
+import useMiniSlider from './use-mini-slider'
 
 import ProgressCircle from './ProgressCircle'
 
@@ -57,6 +66,7 @@ export default {
     const isFullScreen = computed(() => store.state.isFullScreen)
     const currentSong = computed(() => store.getters.currentSong)
     const isPlaying = computed(() => store.state.isPlaying)
+    const playList = computed(() => store.state.playList)
 
     const miniPlayIcon = computed(() => {
       return isPlaying.value ? 'icon-pause-mini' : 'icon-play-mini'
@@ -67,6 +77,11 @@ export default {
       cdRef,
       cdImageRef
     } = useCd()
+
+    const {
+      sliderWrapperRef,
+      betterScroll
+    } = useMiniSlider()
 
     function showNormalPlayer () {
       store.commit('setIsFullScreen', true)
@@ -79,9 +94,12 @@ export default {
       cdClass,
       isPlaying,
       miniPlayIcon, // 播放按钮图标的样式class
+      playList,
       // ref
       cdRef,
       cdImageRef,
+      sliderWrapperRef,
+      betterScroll, // betterScroll的实例，暂时用不上
       // methods
       showNormalPlayer // 切换全屏的函数
     }
@@ -120,16 +138,35 @@ export default {
         }
       }
     }
-    .name {
-      margin-bottom: 2px;
-      @include no-wrap();
-      font-size: $font-size-medium;
-      color: $color-text;
-    }
-    .desc {
-      @include no-wrap();
-      font-size: $font-size-small;
-      color: $color-text-d;
+    .slider-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      line-height: 20px;
+      overflow: hidden;
+      .slider-group {
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+        .slider-page {
+          display: inline-block;
+          width: 100%;
+          transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
+          .name {
+            margin-bottom: 2px;
+            @include no-wrap();
+            font-size: $font-size-medium;
+            color: $color-text;
+          }
+          .desc {
+            @include no-wrap();
+            font-size: $font-size-small;
+            color: $color-text-d;
+          }
+        }
+      }
     }
     .control {
       flex: 0 0 30px;
