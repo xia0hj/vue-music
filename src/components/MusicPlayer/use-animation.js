@@ -3,6 +3,8 @@ import createKeyframeAnimation from 'create-keyframe-animation'
 
 export default function useAnimation () {
   const cdWrapperRef = ref(null)
+  let isEntering = false
+  let isLeaving = false
 
   function getOffsetAndScale () {
     const SMALL_WIDTH = 40 // 左下角小圆的直径
@@ -24,6 +26,11 @@ export default function useAnimation () {
 
   // 小圆变大圆
   function enter (el, done) {
+    if (isLeaving) {
+      afterLeave()
+    }
+    isEntering = true
+
     const { offsetX, offsetY, cdScale } = getOffsetAndScale()
 
     // 从小圆变成大圆的动画
@@ -47,12 +54,19 @@ export default function useAnimation () {
     createKeyframeAnimation.runAnimation(cdWrapperRef.value, 'move', done)
   }
   function afterEnter () {
+    isEntering = false
     createKeyframeAnimation.unregisterAnimation('move')
     cdWrapperRef.value.animation = ''
   }
 
   // 大圆变小圆
   function leave (el, done) {
+    // 正在enter就退出，需要先手动执行afterEnter
+    if (isEntering) {
+      afterEnter()
+    }
+    isLeaving = true
+
     const { offsetX, offsetY, cdScale } = getOffsetAndScale()
     const cdWrapperEl = cdWrapperRef.value
 
@@ -66,6 +80,7 @@ export default function useAnimation () {
     }
   }
   function afterLeave () {
+    isLeaving = false
     const cdWrapperEl = cdWrapperRef.value
     cdWrapperEl.style.transform = ''
     cdWrapperEl.style.transition = ''
