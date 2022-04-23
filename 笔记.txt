@@ -100,3 +100,6 @@ MusicList：
 
 2022/4/22
 1.如果chrome中发现div的style与v-bind:style中的不一致，考虑是否key写错
+
+2022/4/23
+1. npm install --save create-keyframe-animation
