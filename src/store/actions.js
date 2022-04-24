@@ -40,3 +40,30 @@ export function changePlayMode ({ commit, state, getters }, newMode) {
 
   commit('setPlayMode', newMode)
 }
+
+// 从播放列表中去除某一首歌
+export function removeSong ({ commit, state }, song) {
+  const sequenceList = state.sequenceList.slice()
+  const playList = state.playList.slice()
+
+  const sequenceListIndex = findSongIndex(sequenceList, song)
+  const playListIndex = findSongIndex(playList, song)
+
+  sequenceList.splice(sequenceListIndex, 1)
+  playList.splice(playListIndex, 1)
+
+  let currentIndex = state.currentIndex
+  if (playListIndex < currentIndex || currentIndex === playList.length) {
+    currentIndex--
+  }
+
+  commit('setSequenceList', sequenceList)
+  commit('setPlayList', playList)
+  commit('setCurrentIndex', currentIndex)
+}
+
+function findSongIndex (list, song) {
+  return list.findIndex((item) => {
+    return item.id === song.id
+  })
+}

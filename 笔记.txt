@@ -103,3 +103,6 @@ MusicList：
 
 2022/4/23
 1. npm install --save create-keyframe-animation
+
+2022/4/24
+1. <transition-group tag="ul" ref="ulRef"/> 将渲染成ul  通过ulRef.value.$el来获取该dom

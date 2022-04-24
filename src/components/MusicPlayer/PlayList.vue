@@ -15,15 +15,23 @@
 
           <!-- 歌曲滚动列表 -->
           <BaseScroll class="list-content" ref="scrollRef">
-            <ul ref="ulRef">
+            <!-- 过渡效果定义在base.scss -->
+            <TransitionGroup
+              ref="ulRef"
+              name="list"
+              tag="ul"
+            >
               <li v-for="song in sequenceList" :key="song.id" class="item" @click="selectItem(song)">
                 <i class="current" :class="getCurrentIconClass(song)"></i>
                 <span class="text">{{ song.name }}</span>
-                <span class="favorite" @click="toggleFavorite(song)">
+                <span class="favorite" @click.stop="toggleFavorite(song)">
                   <i :class="getFavoriteIconClass(song)"/>
                 </span>
+                <span class="delete" @click.stop="removeSong(song)">
+                  <i class="icon-delete"/>
+                </span>
               </li>
-            </ul>
+            </TransitionGroup>
           </BaseScroll>
 
           <!-- 底部 -->
@@ -95,7 +103,6 @@ export default {
       visiable.value = true
       await nextTick()
       scrollRef.value.betterScroll.refresh()
-
       scrollToCurrentSong()
     }
 
@@ -103,7 +110,7 @@ export default {
       const index = sequenceList.value.findIndex((item) => {
         return item.id === currentSong.value.id
       })
-      const targetEl = ulRef.value.children[index]
+      const targetEl = ulRef.value.$el.children[index]
       scrollRef.value.betterScroll.scrollToElement(targetEl, 300)
     }
 
@@ -113,6 +120,10 @@ export default {
       })
       store.commit('setCurrentIndex', index)
       store.commit('setIsPlaying', true)
+    }
+
+    function removeSong (song) {
+      store.dispatch('removeSong', song)
     }
 
     return {
@@ -129,7 +140,8 @@ export default {
       toggleFavorite,
       hideList,
       showList,
-      selectItem
+      selectItem,
+      removeSong
     }
   }
 }
