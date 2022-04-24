@@ -15,7 +15,19 @@ export default function useMode () {
     } else if (playModeValue === PLAY_MODE.loop) {
       return 'icon-loop'
     } else {
-      return 'icon-sequence'
+      return 'playMode in state is wrong'
+    }
+  })
+  const modeText = computed(() => {
+    const playModeValue = playMode.value
+    if (playModeValue === PLAY_MODE.sequence) {
+      return '顺序播放'
+    } else if (playModeValue === PLAY_MODE.random) {
+      return '随机播放'
+    } else if (playModeValue === PLAY_MODE.loop) {
+      return '循环播放'
+    } else {
+      return 'playMode in state is wrong'
     }
   })
 
@@ -28,6 +40,7 @@ export default function useMode () {
 
   return {
     modeIcon,
+    modeText,
     changeMode
   }
 }

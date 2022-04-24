@@ -1,14 +1,15 @@
 <template>
   <transition name="mini">
     <div class="mini-player" v-show="!isFullScreen" v-on:click="showNormalPlayer">
-      <!-- 播放器左侧的封面 -->
+      <!-- #region 播放器左侧的封面 -->
       <div class="cd-wrapper">
         <div class="cd" ref="cdRef">
           <img width="40" height="40" v-bind:src="currentSong.pic" ref="cdImageRef" v-bind:class="cdClass"/>
         </div>
       </div>
+      <!-- #endregion -->
 
-      <!-- 歌曲信息,类似轮播图可滑动切换 -->
+      <!-- #region 歌曲信息,类似轮播图可滑动切换 -->
       <div class="slider-wrapper" ref="sliderWrapperRef">
         <div class="slider-group">
           <div
@@ -21,8 +22,9 @@
           </div>
         </div>
       </div>
+      <!-- #endregion -->
 
-      <!-- 控制按钮 -->
+      <!-- #region 控制按钮 -->
       <div class="control">
         <ProgressCircle
           v-bind:radius="32"
@@ -36,23 +38,33 @@
           </i>
         </ProgressCircle>
       </div>
+      <!-- #endregion -->
+
+      <!-- #region 可隐藏的播放列表 -->
+      <div class="control" @click.stop="showPlayList">
+        <i class="icon-playlist"></i>
+      </div>
+      <PlayList ref="playListRef"/>
+      <!-- #endregion -->
     </div>
   </transition>
 </template>
 
 <script>
 import { useStore } from 'vuex'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 import useCd from './use-cd'
 import useMiniSlider from './use-mini-slider'
 
 import ProgressCircle from './ProgressCircle'
+import PlayList from './PlayList'
 
 export default {
   name: 'MiniPlayer',
   components: {
-    ProgressCircle
+    ProgressCircle,
+    PlayList
   },
   props: {
     progress: {
@@ -67,10 +79,10 @@ export default {
     const currentSong = computed(() => store.getters.currentSong)
     const isPlaying = computed(() => store.state.isPlaying)
     const playList = computed(() => store.state.playList)
-
     const miniPlayIcon = computed(() => {
       return isPlaying.value ? 'icon-pause-mini' : 'icon-play-mini'
     })
+    const playListRef = ref(null)
 
     const {
       cdClass,
@@ -87,6 +99,10 @@ export default {
       store.commit('setIsFullScreen', true)
     }
 
+    function showPlayList () {
+      playListRef.value.showList()
+    }
+
     return {
       // 计算属性
       isFullScreen,
@@ -100,8 +116,10 @@ export default {
       cdImageRef,
       sliderWrapperRef,
       betterScroll, // betterScroll的实例，暂时用不上
+      playListRef,
       // methods
-      showNormalPlayer // 切换全屏的函数
+      showNormalPlayer, // 切换全屏的函数
+      showPlayList
     }
   }
 }
