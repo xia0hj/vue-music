@@ -231,6 +231,7 @@ export default {
       const audioEl = audioRef.value
       audioEl.src = newSong.url
       audioEl.play()
+      store.commit('setIsPlaying', true)
     })
     watch(isPlaying, (newPlayingState) => {
       // audio正在加载歌曲时，不允许切换播放/暂停
@@ -291,10 +292,6 @@ export default {
         newIndex = list.length - 1
       }
       store.commit('setCurrentIndex', newIndex)
-      // 如果点击播放上一首歌时为暂停状态，需要取消暂停
-      if (!isPlaying.value) {
-        store.commit('setIsPlaying', true)
-      }
     }
     // 播放下一首歌
     function playNext () {
@@ -314,10 +311,6 @@ export default {
         newIndex = 0
       }
       store.commit('setCurrentIndex', newIndex)
-      // 如果点击播放上一首歌时为暂停状态，需要取消暂停
-      if (!isPlaying.value) {
-        store.commit('setIsPlaying', true)
-      }
     }
     // 重新开始播放当前歌曲
     function replay () {

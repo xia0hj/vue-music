@@ -44,7 +44,6 @@ export default function useMiniSlider () {
           // 滑动后切换歌曲
           bsCache.on('slidePageChanged', ({ pageX }) => {
             store.commit('setCurrentIndex', pageX)
-            store.commit('setIsPlaying', true)
           })
         } else {
           bsCache.refresh()
@@ -57,6 +56,14 @@ export default function useMiniSlider () {
     watch(currentIndex, (newIndex) => {
       if (bsCache && shouldSliderShow.value) {
         bsCache.goToPage(newIndex, 0, 0)
+      }
+    })
+
+    // 从播放列表去除歌曲后，但被去除歌曲的dom还在，需要刷新
+    watch(playList, async (newList) => {
+      if (bsCache && shouldSliderShow.value) {
+        await nextTick()
+        bsCache.refresh()
       }
     })
   })

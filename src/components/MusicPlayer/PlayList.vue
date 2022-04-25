@@ -27,7 +27,7 @@
                 <span class="favorite" @click.stop="toggleFavorite(song)">
                   <i :class="getFavoriteIconClass(song)"/>
                 </span>
-                <span class="delete" @click.stop="removeSong(song)">
+                <span class="delete" @click.stop="removeSong(song)" :class="{disable:isRemoving}">
                   <i class="icon-delete"/>
                 </span>
               </li>
@@ -62,6 +62,7 @@ export default {
     const visiable = ref(false)
     const scrollRef = ref(null)
     const ulRef = ref(null)
+    const isRemoving = ref(false) // 播放列表移除歌曲动画
 
     // computed
     const store = useStore()
@@ -81,7 +82,7 @@ export default {
     } = useFavorite()
 
     watch(currentSong, async (newSong) => {
-      if (!visiable.value) {
+      if (!visiable.value || !newSong.id) {
         return
       }
       await nextTick()
@@ -110,6 +111,9 @@ export default {
       const index = sequenceList.value.findIndex((item) => {
         return item.id === currentSong.value.id
       })
+      if (index === -1) {
+        return
+      }
       const targetEl = ulRef.value.$el.children[index]
       scrollRef.value.betterScroll.scrollToElement(targetEl, 300)
     }
@@ -123,7 +127,15 @@ export default {
     }
 
     function removeSong (song) {
+      if (isRemoving.value) {
+        return
+      }
+      isRemoving.value = true
       store.dispatch('removeSong', song)
+      setTimeout(() => {
+        // 在base.scss中定义了动画持续0.3s
+        isRemoving.value = false
+      }, 300)
     }
 
     return {
@@ -132,6 +144,7 @@ export default {
       sequenceList,
       modeIcon,
       modeText,
+      isRemoving,
       scrollRef,
       ulRef,
       changeMode,
