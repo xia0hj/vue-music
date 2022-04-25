@@ -60,8 +60,9 @@ export default function useMiniSlider () {
     })
 
     // 从播放列表去除歌曲后，但被去除歌曲的dom还在，需要刷新
+    // 如果去除歌曲后列表为空，bs刷新会报错
     watch(playList, async (newList) => {
-      if (bsCache && shouldSliderShow.value) {
+      if (bsCache && shouldSliderShow.value && newList.length) {
         await nextTick()
         bsCache.refresh()
       }

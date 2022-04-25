@@ -10,6 +10,9 @@
             <h1 class="title">
               <i class="icon" :class="modeIcon" @click="changeMode"></i>
               <span class="text">{{ modeText }}</span>
+              <span class="clear" @click="showConfirmDialog">
+                <i class="icon-clear"></i>
+              </span>
             </h1>
           </div>
 
@@ -40,6 +43,12 @@
           </div>
 
         </div>
+        <BaseConfirmDialog
+          text="是否清空播放列表？"
+          confirmBtnText="清空"
+          ref="confirmDialogRef"
+          @confirm="confirmClear"
+        ></BaseConfirmDialog>
       </div>
     </Transition>
   </Teleport>
@@ -51,11 +60,13 @@ import { ref, computed, nextTick, watch } from 'vue'
 import { useStore } from 'vuex'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
+import BaseConfirmDialog from '@/components/BaseConfirmDialog'
 
 export default {
   name: 'PlayList',
   components: {
-    BaseScroll
+    BaseScroll,
+    BaseConfirmDialog
   },
   setup: function () {
     // data
@@ -63,6 +74,7 @@ export default {
     const scrollRef = ref(null)
     const ulRef = ref(null)
     const isRemoving = ref(false) // 播放列表移除歌曲动画
+    const confirmDialogRef = ref(null)
 
     // computed
     const store = useStore()
@@ -132,10 +144,22 @@ export default {
       }
       isRemoving.value = true
       store.dispatch('removeSong', song)
+      if (!playList.value.length) {
+        hideList()
+      }
       setTimeout(() => {
         // 在base.scss中定义了动画持续0.3s
         isRemoving.value = false
       }, 300)
+    }
+
+    function showConfirmDialog () {
+      confirmDialogRef.value.show()
+    }
+
+    function confirmClear () {
+      store.dispatch('clearSongList')
+      hideList()
     }
 
     return {
@@ -147,6 +171,7 @@ export default {
       isRemoving,
       scrollRef,
       ulRef,
+      confirmDialogRef,
       changeMode,
       getFavoriteIconClass,
       getCurrentIconClass,
@@ -154,7 +179,9 @@ export default {
       hideList,
       showList,
       selectItem,
-      removeSong
+      removeSong,
+      showConfirmDialog,
+      confirmClear
     }
   }
 }
