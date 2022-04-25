@@ -5,6 +5,7 @@ import PageSearch from '@/views/PageSearch.vue'
 import PageSinger from '@/views/PageSinger.vue'
 import PageTopList from '@/views/PageTopList.vue'
 import PageSingerDetail from '@/views/PageSingerDetail.vue'
+import PageAlbum from '@/views/PageAlbum.vue'
 
 const routes = [
   {
@@ -13,7 +14,13 @@ const routes = [
   },
   {
     path: '/recommend',
-    component: PageRecommend
+    component: PageRecommend,
+    children: [
+      {
+        path: ':id',
+        component: PageAlbum
+      }
+    ]
   },
   {
     path: '/search',

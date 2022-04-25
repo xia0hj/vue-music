@@ -436,6 +436,51 @@ function registerLyric (app) {
   })
 }
 
+// 注册歌单专辑接口
+function registerAlbum (app) {
+  app.get('/api/getAlbum', (appRequest, appResponse) => {
+    const data = {
+      req_0: {
+        module: 'srf_diss_info.DissInfoServer',
+        method: 'CgiGetDiss',
+        param: {
+          disstid: Number(appRequest.query.id),
+          onlysonglist: 1,
+          song_begin: 0,
+          song_num: 100
+        }
+      },
+      comm: {
+        g_tk: token,
+        uin: '0',
+        format: 'json',
+        platform: 'h5'
+      }
+    }
+
+    const sign = getSecuritySign(JSON.stringify(data))
+
+    const url = `https://u.y.qq.com/cgi-bin/musics.fcg?_=${getRandomValue()}&sign=${sign}`
+
+    postByAxios(url, data).then((axiosResponse) => {
+      const data = axiosResponse.data
+      if (data.code === CODE_OK) {
+        const list = data.req_0.data.songlist
+        const songList = handleSongList(list)
+
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            songs: songList
+          }
+        })
+      } else {
+        appResponse.json(data)
+      }
+    })
+  })
+}
+
 // 注册后端路由
 const registerRouter = (app) => {
   registerRecommend(app)
@@ -443,6 +488,7 @@ const registerRouter = (app) => {
   registerSingerDetail(app)
   registerSongsUrl(app)
   registerLyric(app)
+  registerAlbum(app)
 }
 
 module.exports = registerRouter

@@ -12,10 +12,16 @@
 <script>
 
 import { getSingerDetail } from '@/service/singer.js'
-import { processSongs } from '@/service/song'
-import MusicList from '@/components/MusicList'
 import { SINGER_KEY } from '@/assets/js/constant'
+import createDetailComponent from '@/assets/js/create-detail-component'
 
+export default createDetailComponent(
+  'PageSingerDetail',
+  SINGER_KEY,
+  getSingerDetail
+)
+
+/* 以下逻辑封装至'@/assets/js/create-detail-component.js'
 export default {
   name: 'PageSingerDetail',
   components: {
@@ -71,6 +77,7 @@ export default {
     this.$data.isLoading = false
   }
 }
+*/
 </script>
 
 <style lang="scss" scoped>

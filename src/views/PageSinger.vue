@@ -7,7 +7,7 @@
     <!-- router-view v-bind:singer="selectedSinger"/ -->
     <router-view v-slot="{ Component }">
       <transition appear name="slide">
-        <component :is="Component" v-bind:singer="selectedSinger"/>
+        <component :is="Component" v-bind:data="selectedSinger"/>
       </transition>
     </router-view>
   </div>
