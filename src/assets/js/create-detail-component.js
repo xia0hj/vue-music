@@ -30,7 +30,7 @@ export default function createDetailComponent (name, key, fetch) {
       },
       title () {
         const data = this.computedData
-        return data && data.name
+        return data && (data.name || data.title)
       },
       computedData: function () {
         // 如果是从歌手列表点进来详情页面，父组件会传一个singer参数
@@ -41,7 +41,7 @@ export default function createDetailComponent (name, key, fetch) {
           returnData = propsData
         } else {
           const cachedData = JSON.parse(window.sessionStorage.getItem(key))
-          if (cachedData && cachedData.mid === this.$route.params.id) {
+          if (cachedData && String(cachedData.mid || cachedData.id) === this.$route.params.id) {
             returnData = cachedData
           }
         }
