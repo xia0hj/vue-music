@@ -1,7 +1,7 @@
 <template>
   <AppHeader/>
   <NavigationBar/>
-  <router-view/>
+  <router-view :style="viewStyle"/>
   <MusicPlayer/>
 </template>
 
@@ -14,6 +14,15 @@ export default {
     AppHeader,
     NavigationBar,
     MusicPlayer
+  },
+  computed: {
+    viewStyle: function () {
+      // 底部播放器的高度，如果播放列表不为空，则router-view页面要往上移给底部播放器挪位置
+      const bottom = this.$store.state.playList.length ? '60px' : '0'
+      return {
+        bottom
+      }
+    }
   }
 }
 </script>

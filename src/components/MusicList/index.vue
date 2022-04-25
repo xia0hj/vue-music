@@ -117,8 +117,11 @@ export default {
       }
     },
     scrollListStyle: function () {
+      // 底部播放器的高度，如果播放列表不为空，则歌曲列表要往上移给底部播放器挪位置
+      const bottom = this.$store.state.playList.length ? '60px' : '0'
       return {
-        top: `${this.$data.imageHeight}px`
+        top: `${this.$data.imageHeight}px`,
+        bottom
       }
     },
     imagefilterStyle: function () {
