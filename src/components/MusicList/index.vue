@@ -52,7 +52,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import BaseScroll from '@/components/BaseScroll'
+import BaseScroll from '@/components/WrappedScroll'
 import BaseSongList from '@/components/BaseSongList'
 
 const TITLE_HEIGHT = 40 // 顶部的标题高度，当列表往上滚时不能遮挡标题

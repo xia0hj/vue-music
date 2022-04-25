@@ -41,7 +41,7 @@
 <script>
 import { getRecommend } from '@/service/recommend.js'
 import BaseSlider from '@/components/BaseSlider'
-import BaseScroll from '@/components/BaseScroll'
+import BaseScroll from '@/components/WrappedScroll'
 
 export default {
   name: 'PageRecommend',

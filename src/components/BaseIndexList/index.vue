@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import BaseScroll from '@/components/BaseScroll'
+import BaseScroll from '@/components/WrappedScroll'
 import useFixedTitle from './use-fixed-title'
 import useShortcut from './use-shortcut'
 export default {
