@@ -481,6 +481,60 @@ function registerAlbum (app) {
   })
 }
 
+// 注册排行榜接口
+function registerTopList (app) {
+  app.get('/api/getTopList', (appRequest, appResponse) => {
+    const url = 'https://u.y.qq.com/cgi-bin/musics.fcg'
+
+    const data = JSON.stringify({
+      comm: { ct: 24 },
+      toplist: { module: 'musicToplist.ToplistInfoServer', method: 'GetAll', param: {} }
+    })
+
+    const randomKey = getRandomValue('recom')
+    const sign = getSecuritySign(data)
+
+    getByAxios(url, {
+      sign,
+      '-': randomKey,
+      data
+    }).then((axiosResponse) => {
+      const data = axiosResponse.data
+      if (data.code === CODE_OK) {
+        const topList = []
+        const group = data.toplist.data.group
+
+        group.forEach((item) => {
+          item.toplist.forEach((listItem) => {
+            topList.push({
+              id: listItem.topId,
+              pic: listItem.frontPicUrl,
+              name: listItem.title,
+              period: listItem.period,
+              songList: listItem.song.map((songItem) => {
+                return {
+                  id: songItem.songId,
+                  singerName: songItem.singerName,
+                  songName: songItem.title
+                }
+              })
+            })
+          })
+        })
+
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            topList
+          }
+        })
+      } else {
+        appResponse.json(data)
+      }
+    })
+  })
+}
+
 // 注册后端路由
 const registerRouter = (app) => {
   registerRecommend(app)
@@ -489,6 +543,7 @@ const registerRouter = (app) => {
   registerSongsUrl(app)
   registerLyric(app)
   registerAlbum(app)
+  registerTopList(app)
 }
 
 module.exports = registerRouter
