@@ -6,6 +6,7 @@ import PageSinger from '@/views/PageSinger.vue'
 import PageTopList from '@/views/PageTopList.vue'
 import PageSingerDetail from '@/views/PageSingerDetail.vue'
 import PageAlbum from '@/views/PageAlbum.vue'
+import PageTopDetail from '@/views/PageTopDetail.vue'
 
 const routes = [
   {
@@ -38,7 +39,13 @@ const routes = [
   },
   {
     path: '/top-list',
-    component: PageTopList
+    component: PageTopList,
+    children: [
+      {
+        path: ':id',
+        component: PageTopDetail
+      }
+    ]
   }
 ]
 

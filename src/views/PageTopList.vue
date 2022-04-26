@@ -6,6 +6,7 @@
           class="item"
           v-for="item in topList"
           :key="item.id"
+          @click="selectItem(item)"
         >
           <div class="icon">
             <img width="100" height="100" v-lazy="item.pic"/>
@@ -24,10 +25,17 @@
         </li>
       </ul>
     </Scroll>
+
+    <router-view v-slot="{ Component }">
+      <transition appear name="slide">
+        <component :is="Component" v-bind:data="selectedTop"/>
+      </transition>
+    </router-view>
   </div>
 </template>
 
 <script>
+import { TOP_KEY } from '@/assets/js/constant'
 import Scroll from '@/components/WrappedScroll'
 import { getTopList } from '@/service/top-list'
 export default {
@@ -38,13 +46,23 @@ export default {
   data: function () {
     return {
       isLoading: true,
-      topList: []
+      topList: [],
+      selectedTop: null
     }
   },
   created: async function () {
     const result = await getTopList()
     this.$data.topList = result.topList
     this.$data.isLoading = false
+  },
+  methods: {
+    selectItem: function (top) {
+      this.$data.selectedTop = top
+      window.sessionStorage.setItem(TOP_KEY, JSON.stringify(top)) // 把当前排行榜缓存起来，方便排行详情页面刷新时使用
+      this.$router.push({
+        path: `/top-list/${top.id}`
+      })
+    }
   }
 }
 </script>

@@ -43,6 +43,7 @@
         <BaseSongList
           v-bind:songs="songs"
           v-on:selectItem="selectSong"
+          :isRank="isRank"
         />
       </div>
     </BaseScroll>
@@ -73,6 +74,7 @@ export default {
     title: String,
     pic: String,
     isLoading: Boolean,
+    isRank: Boolean,
     noResultText: {
       type: String,
       default: function () {

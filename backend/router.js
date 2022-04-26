@@ -535,6 +535,55 @@ function registerTopList (app) {
   })
 }
 
+// 注册排行榜详情接口
+function registerTopDetail (app) {
+  app.get('/api/getTopDetail', (appRequest, appResponse) => {
+    const url = 'https://u.y.qq.com/cgi-bin/musics.fcg'
+    const { id, period } = appRequest.query
+
+    const data = JSON.stringify({
+      detail: {
+        module: 'musicToplist.ToplistInfoServer',
+        method: 'GetDetail',
+        param: {
+          topId: Number(id),
+          offset: 0,
+          num: 100,
+          period
+        }
+      },
+      comm: {
+        ct: 24,
+        cv: 0
+      }
+    })
+
+    const randomKey = getRandomValue('getUCGI')
+    const sign = getSecuritySign(data)
+
+    getByAxios(url, {
+      sign,
+      '-': randomKey,
+      data
+    }).then((axiosResponse) => {
+      const data = axiosResponse.data
+      if (data.code === CODE_OK) {
+        const list = data.detail.data.songInfoList
+        const songList = handleSongList(list)
+
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            songs: songList
+          }
+        })
+      } else {
+        appResponse.json(data)
+      }
+    })
+  })
+}
+
 // 注册后端路由
 const registerRouter = (app) => {
   registerRecommend(app)
@@ -544,6 +593,7 @@ const registerRouter = (app) => {
   registerLyric(app)
   registerAlbum(app)
   registerTopList(app)
+  registerTopDetail(app)
 }
 
 module.exports = registerRouter
