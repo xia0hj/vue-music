@@ -25,7 +25,13 @@ const routes = [
   },
   {
     path: '/search',
-    component: PageSearch
+    component: PageSearch,
+    children: [
+      {
+        path: ':id',
+        component: PageSingerDetail
+      }
+    ]
   },
   {
     path: '/singer',

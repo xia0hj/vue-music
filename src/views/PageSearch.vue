@@ -28,9 +28,16 @@
       <Suggest
         :query="query"
         @selectSong="selectSong"
+        @selectSinger="selectSinger"
       ></Suggest>
     </div>
 
+    <!-- 歌手详情页二级路由 -->
+    <router-view v-slot="{ Component }">
+      <transition appear name="slide">
+        <component :is="Component" v-bind:data="selectedSinger"/>
+      </transition>
+    </router-view>
   </div>
 </template>
 
@@ -40,6 +47,8 @@ import Suggest from '@/components/Search/Suggest'
 import { ref } from 'vue'
 import { getHotKeys } from '@/service/search'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { SINGER_KEY } from '@/assets/js/constant'
 
 export default {
   name: 'page-search',
@@ -51,6 +60,8 @@ export default {
     const query = ref('')
     const hotKeys = ref([])
     const store = useStore()
+    const selectedSinger = ref(null)
+    const router = useRouter()
 
     getHotKeys().then((result) => {
       hotKeys.value = result.hotKeys
@@ -63,12 +74,21 @@ export default {
     function selectSong (song) {
       store.dispatch('addSong', song)
     }
+    function selectSinger (singer) {
+      selectSinger.value = singer
+      window.sessionStorage.setItem(SINGER_KEY, JSON.stringify(singer)) // 把singer缓存起来，方便歌手详情页面刷新时使用
+      router.push({
+        path: `/singer/${singer.mid}`
+      })
+    }
 
     return {
       query,
       hotKeys,
       addQuery,
-      selectSong
+      selectSong,
+      selectSinger,
+      selectedSinger
     }
   }
 }

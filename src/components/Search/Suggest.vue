@@ -5,8 +5,10 @@
     ref="scrollWrapperRef"
   >
     <ul class="suggest-list">
+      <!-- 歌手 -->
       <li class="suggest-item"
         v-if="singer"
+        @click="selectSinger(singer)"
       >
         <div class="icon">
           <i class="icon-mine"></i>
@@ -16,6 +18,7 @@
         </div>
       </li>
 
+      <!-- 歌曲 -->
       <li class="suggest-item"
         v-for="song in songs"
         :key="song.id"
@@ -53,7 +56,7 @@ export default {
       default: true
     }
   },
-  emits: ['selectSong'],
+  emits: ['selectSong', 'selectSinger'],
   setup: function (props, { emit }) {
     const singer = ref(null)
     const songs = ref([])
@@ -134,6 +137,9 @@ export default {
     function selectSong (song) {
       emit('selectSong', song)
     }
+    function selectSinger (singer) {
+      emit('selectSinger', singer)
+    }
 
     return {
       singer,
@@ -146,7 +152,8 @@ export default {
       scrollWrapperRef,
       isPullUpLoading2,
       // 点击事件
-      selectSong
+      selectSong,
+      selectSinger
     }
   }
 }
