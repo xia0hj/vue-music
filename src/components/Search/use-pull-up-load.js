@@ -38,6 +38,7 @@ export default function usePullUpLoad (requestData) {
 
   return {
     scrollWrapperRef,
-    isPullUpLoading
+    isPullUpLoading,
+    betterScroll
   }
 }

@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import { search } from '@/service/search'
 import { processSongs } from '@/service/song'
 import usePullUpLoad from './use-pull-up-load'
@@ -68,7 +68,8 @@ export default {
 
     const {
       scrollWrapperRef,
-      isPullUpLoading
+      isPullUpLoading,
+      betterScroll
     } = usePullUpLoad(searchMore)
 
     const isPullUpLoading2 = computed(() => {
@@ -94,6 +95,8 @@ export default {
       songs.value = await processSongs(result.songs)
       singer.value = result.singer
       hasMore.value = result.hasMore
+      await nextTick()
+      await makeScrollable()
     }
 
     async function searchMore () {
@@ -104,6 +107,15 @@ export default {
       const result = await search(props.query, page.value, props.isShowSinger)
       songs.value = songs.value.concat(await processSongs(result.songs))
       hasMore.value = result.hasMore
+      await nextTick()
+      await makeScrollable()
+    }
+
+    // 针对第一页的数据没有占满一页的情况
+    async function makeScrollable () {
+      if (betterScroll.value.maxScrollY >= -1) {
+        await searchMore()
+      }
     }
 
     return {
