@@ -19,6 +19,7 @@
       <li class="suggest-item"
         v-for="song in songs"
         :key="song.id"
+        @click="selectSong(song)"
       >
         <div class="icon">
           <i class="icon-music"></i>
@@ -52,7 +53,8 @@ export default {
       default: true
     }
   },
-  setup: function (props) {
+  emits: ['selectSong'],
+  setup: function (props, { emit }) {
     const singer = ref(null)
     const songs = ref([])
     const hasMore = ref(true)
@@ -129,6 +131,10 @@ export default {
       }
     }
 
+    function selectSong (song) {
+      emit('selectSong', song)
+    }
+
     return {
       singer,
       songs,
@@ -138,7 +144,9 @@ export default {
       noResultText,
       // pull up load
       scrollWrapperRef,
-      isPullUpLoading2
+      isPullUpLoading2,
+      // 点击事件
+      selectSong
     }
   }
 }

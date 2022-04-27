@@ -77,6 +77,32 @@ export function clearSongList ({ commit }) {
   commit('setIsPlaying', false)
 }
 
+// 添加一首歌曲到播放列表
+export function addSong ({ commit, state }, song) {
+  const playList = state.playList.slice()
+  const sequenceList = state.sequenceList.slice()
+  let currentIndex = state.currentIndex
+
+  const findIndex = findSongIndex(playList, song)
+  if (findIndex >= 0) {
+    currentIndex = findIndex
+  } else {
+    playList.push(song)
+    currentIndex = playList.length - 1
+  }
+
+  const sequenceIndex = findSongIndex(sequenceList, song)
+  if (sequenceIndex < 0) {
+    sequenceList.push(song)
+  }
+
+  commit('setSequenceList', sequenceList)
+  commit('setPlayList', playList)
+  commit('setCurrentIndex', currentIndex)
+  commit('setIsPlaying', true)
+  commit('setIsFullScreen', true)
+}
+
 function findSongIndex (list, song) {
   return list.findIndex((item) => {
     return item.id === song.id
