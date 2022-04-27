@@ -584,6 +584,34 @@ function registerTopDetail (app) {
   })
 }
 
+// 注册热门搜索接口
+function registerHotKeys (app) {
+  app.get('/api/getHotKeys', (appRequest, appResponse) => {
+    const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
+
+    getByAxios(url, {
+      g_tk_new_20200303: token
+    }).then((axiosResponse) => {
+      const data = axiosResponse.data
+      if (data.code === CODE_OK) {
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            hotKeys: data.data.hotkey.map((key) => {
+              return {
+                key: key.k,
+                id: key.n
+              }
+            }).slice(0, 10)
+          }
+        })
+      } else {
+        appResponse.json(data)
+      }
+    })
+  })
+}
+
 // 注册后端路由
 const registerRouter = (app) => {
   registerRecommend(app)
@@ -594,6 +622,7 @@ const registerRouter = (app) => {
   registerAlbum(app)
   registerTopList(app)
   registerTopDetail(app)
+  registerHotKeys(app)
 }
 
 module.exports = registerRouter

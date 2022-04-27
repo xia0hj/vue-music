@@ -4,6 +4,7 @@
     <input
       class="input-inner"
       v-model="query"
+      :placeholder="placeholder"
     />
     <i
       class="icon-dismiss"
@@ -18,7 +19,11 @@ import { debounce } from 'throttle-debounce'
 export default {
   name: 'search-input',
   props: {
-    modelValue: String // 必须定义为modelValue
+    modelValue: String, // 必须定义为modelValue
+    placeholder: {
+      type: String,
+      default: '搜索歌曲、歌手'
+    }
   },
   data: function () {
     return {
@@ -26,7 +31,7 @@ export default {
     }
   },
   created: function () {
-    // 内部data发生变化，向外派发事件传递新的值
+    // 内部data发生变化，向外派发事件传递新的值，此处不能直接写成watch
     this.$watch('query', debounce(300, (newQuery) => {
       this.$emit('update:modelValue', newQuery.trim()) // 事件名必须为update:modelValue
     }))
