@@ -612,6 +612,93 @@ function registerHotKeys (app) {
   })
 }
 
+// 注册搜索查询接口
+function registerSearch (app) {
+  app.get('/api/search', (appRequest, appResponse) => {
+    // const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+    const url = 'https://shc.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+
+    const { query, page, showSinger } = appRequest.query
+
+    const data = {
+      _: getRandomValue(),
+      g_tk_new_20200303: token,
+      w: query,
+      p: page,
+      perpage: 20,
+      n: 20,
+      zhidaqu: 1,
+      catZhida: showSinger === 'true' ? 1 : 0,
+      t: 0,
+      flag: 1,
+      ie: 'utf-8',
+      sem: 1,
+      aggr: 0,
+      remoteplace: 'txt.mqq.all',
+      uin: '0',
+      needNewCode: 1,
+      platform: 'h5',
+      format: 'json'
+    }
+
+    getByAxios(url, data).then((axiosResponse) => {
+      const data = axiosResponse.data
+      if (data.code === CODE_OK) {
+        const songList = []
+        const songData = data.data.song
+        const list = songData.list
+
+        list.forEach((item) => {
+          const info = item
+          if (info.pay.payplay !== 0 || !info.interval) {
+            // 过滤付费歌曲
+            return
+          }
+
+          const song = {
+            id: info.songid,
+            mid: info.songmid,
+            name: info.songname,
+            singer: mergeSinger(info.singer),
+            url: '',
+            duration: info.interval,
+            pic: info.albummid ? `https://y.gtimg.cn/music/photo_new/T002R800x800M000${info.albummid}.jpg?max_age=2592000` : fallbackPicUrl,
+            album: info.albumname
+          }
+          songList.push(song)
+        })
+
+        let singer
+        const zhida = data.data.zhida
+        if (zhida && zhida.type === 2) {
+          singer = {
+            id: zhida.singerid,
+            mid: zhida.singermid,
+            name: zhida.singername,
+            pic: `https://y.gtimg.cn/music/photo_new/T001R800x800M000${zhida.singermid}.jpg?max_age=2592000`
+          }
+        }
+
+        const { curnum, curpage, totalnum } = songData
+        const hasMore = 20 * (curpage - 1) + curnum < totalnum
+
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            songs: songList,
+            singer,
+            hasMore
+          }
+        })
+      } else {
+        appResponse.json(data)
+      }
+    }).catch((e) => {
+      appResponse.status(500).send()
+    })
+  })
+}
+
 // 注册后端路由
 const registerRouter = (app) => {
   registerRecommend(app)
@@ -623,6 +710,7 @@ const registerRouter = (app) => {
   registerTopList(app)
   registerTopDetail(app)
   registerHotKeys(app)
+  registerSearch(app)
 }
 
 module.exports = registerRouter

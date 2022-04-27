@@ -7,7 +7,7 @@
     </div>
 
     <!--  -->
-    <div class="search-content">
+    <div class="search-content" v-show="!query">
       <!-- 热门搜索推荐 -->
       <div class="hot-keys">
         <h1 class="title">热门搜索</h1>
@@ -24,18 +24,24 @@
       </div>
     </div>
 
+    <div class="search-result" v-show="query">
+      <Suggest :query="query"></Suggest>
+    </div>
+
   </div>
 </template>
 
 <script>
 import SearchInput from '@/components/Search/SearchInput'
-import { ref, watch } from 'vue'
+import Suggest from '@/components/Search/Suggest'
+import { ref } from 'vue'
 import { getHotKeys } from '@/service/search'
 
 export default {
   name: 'page-search',
   components: {
-    SearchInput
+    SearchInput,
+    Suggest
   },
   setup: function () {
     const query = ref('')
@@ -43,10 +49,6 @@ export default {
 
     getHotKeys().then((result) => {
       hotKeys.value = result.hotKeys
-    })
-
-    watch(query, (newQuery) => {
-      console.log(newQuery)
     })
 
     function addQuery (key) {
