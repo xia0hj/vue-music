@@ -58,6 +58,7 @@ export default {
     const hasMore = ref(true)
     const page = ref(1)
     const loadingText = ref('')
+    const isAutoLoading = ref(false) // 是否正在自动补够一页的数据
     const isLoading = computed(() => {
       return !singer.value && !songs.value.length
     })
@@ -66,11 +67,15 @@ export default {
     })
     const noResultText = ref('抱歉，暂无搜索结果')
 
+    const preventPullUpLoad = computed(() => {
+      return isLoading.value || isAutoLoading.value
+    })
+
     const {
       scrollWrapperRef,
       isPullUpLoading,
       betterScroll
-    } = usePullUpLoad(searchMore)
+    } = usePullUpLoad(searchMore, preventPullUpLoad)
 
     const isPullUpLoading2 = computed(() => {
       return isPullUpLoading.value && hasMore.value
@@ -85,6 +90,9 @@ export default {
 
     // 第一次搜索，需要初始化
     async function searchFirst () {
+      if (!props.query) {
+        return
+      }
       // 初始化
       page.value = 1
       songs.value = []
@@ -99,8 +107,9 @@ export default {
       await makeScrollable()
     }
 
+    // 注意searchMore期间query改为，导致search一直取不到数据，重复发送请求
     async function searchMore () {
-      if (!hasMore.value) {
+      if (!hasMore.value || !props.query) {
         return
       }
       page.value++
@@ -114,7 +123,9 @@ export default {
     // 针对第一页的数据没有占满一页的情况
     async function makeScrollable () {
       if (betterScroll.value.maxScrollY >= -1) {
+        isAutoLoading.value = true
         await searchMore()
+        isAutoLoading.value = false
       }
     }
 

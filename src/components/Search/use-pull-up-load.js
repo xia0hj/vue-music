@@ -9,7 +9,7 @@ BScroll.use(ObserveDOM)
 /**
  * @param {function} requestData 异步请求数据的函数
  */
-export default function usePullUpLoad (requestData) {
+export default function usePullUpLoad (requestData, preventPullUpLoad) {
   const betterScroll = ref(null)
   const scrollWrapperRef = ref(null)
   const isPullUpLoading = ref(false)
@@ -24,6 +24,10 @@ export default function usePullUpLoad (requestData) {
     bsVal.on('pullingUp', pullingUpHandler)
 
     async function pullingUpHandler () {
+      if (preventPullUpLoad.value) {
+        bsVal.finishPullUp()
+        return
+      }
       isPullUpLoading.value = true
       await requestData()
       bsVal.finishPullUp()
