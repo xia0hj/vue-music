@@ -2,10 +2,10 @@
   <div class="suggest"
     v-loading:[loadingText]="isLoading"
     v-no-result:[noResultText]="isNoResult"
+    ref="scrollWrapperRef"
   >
     <ul class="suggest-list">
-      <li
-        class="suggest-item"
+      <li class="suggest-item"
         v-if="singer"
       >
         <div class="icon">
@@ -15,8 +15,8 @@
           <p class="text">{{ singer.name }}</p>
         </div>
       </li>
-      <li
-        class="suggest-item"
+
+      <li class="suggest-item"
         v-for="song in songs"
         :key="song.id"
       >
@@ -27,6 +27,12 @@
           <p class="text">{{ song.singer }}  -  {{ song.name }}</p>
         </div>
       </li>
+
+      <div class="suggest-item"
+        v-loading:[loadingText]="isPullUpLoading2"
+      >
+
+      </div>
     </ul>
   </div>
 </template>
@@ -35,6 +41,7 @@
 import { ref, watch, computed } from 'vue'
 import { search } from '@/service/search'
 import { processSongs } from '@/service/song'
+import usePullUpLoad from './use-pull-up-load'
 
 export default {
   name: 'suggest',
@@ -59,6 +66,15 @@ export default {
     })
     const noResultText = ref('抱歉，暂无搜索结果')
 
+    const {
+      scrollWrapperRef,
+      isPullUpLoading
+    } = usePullUpLoad(searchMore)
+
+    const isPullUpLoading2 = computed(() => {
+      return isPullUpLoading.value && hasMore.value
+    })
+
     watch(() => props.query, async (newQuery) => {
       if (!newQuery) {
         return
@@ -80,13 +96,26 @@ export default {
       hasMore.value = result.hasMore
     }
 
+    async function searchMore () {
+      if (!hasMore.value) {
+        return
+      }
+      page.value++
+      const result = await search(props.query, page.value, props.isShowSinger)
+      songs.value = songs.value.concat(await processSongs(result.songs))
+      hasMore.value = result.hasMore
+    }
+
     return {
       singer,
       songs,
       loadingText,
       isLoading,
       isNoResult,
-      noResultText
+      noResultText,
+      // pull up load
+      scrollWrapperRef,
+      isPullUpLoading2
     }
   }
 }

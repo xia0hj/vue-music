@@ -115,3 +115,4 @@ MusicList：
 1. v-model在组件中的用法：vue2默认使用名为value的props和input事件；vue3默认使用名为modelValue的props和update:modelValue事件
 2.防抖，节流函数npm install throttle-debounce
 3. props不是响应式对象
+4. 上拉加载 npm install @better-scroll/pull-up --save
