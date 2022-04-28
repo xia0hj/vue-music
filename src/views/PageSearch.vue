@@ -8,6 +8,7 @@
 
     <!--  -->
     <div class="search-content" v-show="!query">
+
       <!-- 热门搜索推荐 -->
       <div class="hot-keys">
         <h1 class="title">热门搜索</h1>
@@ -21,6 +22,16 @@
             <span>{{ item.key }}</span>
           </li>
         </ul>
+      </div>
+
+      <!-- 搜索历史 -->
+      <div class="search-history" v-show="searchHistory.length">
+        <h1 class="title">
+          <span class="text">搜索历史</span>
+        </h1>
+        <search-list
+          :searches="searchHistory"
+        ></search-list>
       </div>
     </div>
 
@@ -44,17 +55,20 @@
 <script>
 import SearchInput from '@/components/Search/SearchInput'
 import Suggest from '@/components/Search/Suggest'
-import { ref } from 'vue'
+import SearchList from '@/components/Search/search-list'
+import { computed, ref } from 'vue'
 import { getHotKeys } from '@/service/search'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { SINGER_KEY } from '@/assets/js/constant'
+import useSearchHistory from '@/components/Search/use-search-history'
 
 export default {
   name: 'page-search',
   components: {
     SearchInput,
-    Suggest
+    Suggest,
+    SearchList
   },
   setup: function () {
     const query = ref('')
@@ -62,6 +76,11 @@ export default {
     const store = useStore()
     const selectedSinger = ref(null)
     const router = useRouter()
+    const searchHistory = computed(() => store.state.searchHistory)
+
+    const {
+      saveSearch
+    } = useSearchHistory()
 
     getHotKeys().then((result) => {
       hotKeys.value = result.hotKeys
@@ -72,9 +91,11 @@ export default {
     }
 
     function selectSong (song) {
+      saveSearch(query.value) // 选择歌曲时记录搜索历史
       store.dispatch('addSong', song)
     }
     function selectSinger (singer) {
+      saveSearch(query.value) // 选择歌手时记录搜索历史
       selectSinger.value = singer
       window.sessionStorage.setItem(SINGER_KEY, JSON.stringify(singer)) // 把singer缓存起来，方便歌手详情页面刷新时使用
       router.push({
@@ -88,7 +109,8 @@ export default {
       addQuery,
       selectSong,
       selectSinger,
-      selectedSinger
+      selectedSinger,
+      searchHistory
     }
   }
 }

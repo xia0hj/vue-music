@@ -20,6 +20,9 @@ const mutations = {
   setFavoriteList: function (state, list) {
     state.favoriteList = list
   },
+  setSearchHistory: function (state, searches) {
+    state.searchHistory = searches
+  },
   // 将歌词缓存到song对象上
   addSongLyric: function (state, { song, lyric }) {
     state.sequenceList.map((item) => {

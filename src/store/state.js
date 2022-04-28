@@ -1,4 +1,4 @@
-import { PLAY_MODE, FAVORITE_KEY } from '@/assets/js/constant'
+import { PLAY_MODE, FAVORITE_KEY, SEARCH_KEY } from '@/assets/js/constant'
 import { getValueArray } from '@/assets/js/web-storage'
 
 const state = {
@@ -8,7 +8,8 @@ const state = {
   playMode: PLAY_MODE.sequence, // 播放模式，默认顺序播放
   currentIndex: 0,
   isFullScreen: false,
-  favoriteList: getValueArray(FAVORITE_KEY)
+  favoriteList: getValueArray(FAVORITE_KEY),
+  searchHistory: getValueArray(SEARCH_KEY)
 }
 
 export default state

@@ -34,7 +34,7 @@ export function removeItem (key, compare) {
 /**
  * 根据key取value数组，如果取不到则返回空数组
  * @param {string} key key
- * @returns value数组
+ * @returns {array} value数组
  */
 export function getValueArray (key) {
   let value = JSON.parse(window.localStorage.getItem(key))
