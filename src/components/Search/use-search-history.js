@@ -1,4 +1,4 @@
-import { unshiftItem } from '@/assets/js/web-storage'
+import { unshiftItem, removeItem } from '@/assets/js/web-storage'
 import { SEARCH_KEY } from '@/assets/js/constant'
 import { useStore } from 'vuex'
 
@@ -13,7 +13,15 @@ export default function useSearchHistory () {
     store.commit('setSearchHistory', searches)
   }
 
+  function deleteSearch (query) {
+    const searches = removeItem(SEARCH_KEY, (item) => {
+      return item === query
+    })
+    store.commit('setSearchHistory', searches)
+  }
+
   return {
-    saveSearch
+    saveSearch,
+    deleteSearch
   }
 }

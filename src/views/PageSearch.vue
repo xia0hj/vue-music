@@ -29,9 +29,11 @@
         <h1 class="title">
           <span class="text">搜索历史</span>
         </h1>
-        <search-list
+        <base-search-list
           :searches="searchHistory"
-        ></search-list>
+          @selectItem="addQuery"
+          @removeItem="deleteSearch"
+        ></base-search-list>
       </div>
     </div>
 
@@ -55,7 +57,7 @@
 <script>
 import SearchInput from '@/components/Search/SearchInput'
 import Suggest from '@/components/Search/Suggest'
-import SearchList from '@/components/Search/search-list'
+import BaseSearchList from '@/components/base-search-list'
 import { computed, ref } from 'vue'
 import { getHotKeys } from '@/service/search'
 import { useStore } from 'vuex'
@@ -68,7 +70,7 @@ export default {
   components: {
     SearchInput,
     Suggest,
-    SearchList
+    BaseSearchList
   },
   setup: function () {
     const query = ref('')
@@ -79,7 +81,8 @@ export default {
     const searchHistory = computed(() => store.state.searchHistory)
 
     const {
-      saveSearch
+      saveSearch,
+      deleteSearch
     } = useSearchHistory()
 
     getHotKeys().then((result) => {
@@ -110,7 +113,8 @@ export default {
       selectSong,
       selectSinger,
       selectedSinger,
-      searchHistory
+      searchHistory,
+      deleteSearch
     }
   }
 }

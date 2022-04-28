@@ -4,9 +4,10 @@
       <li class="search-item"
         v-for="item in searches"
         :key="item"
+        @click="selectItem(item)"
       >
         <span class="text">{{ item }}</span>
-        <span class="icon">
+        <span class="icon" @click.stop="removeItem(item)">
           <i class="icon-delete"></i>
         </span>
       </li>
@@ -16,13 +17,22 @@
 
 <script>
 export default {
-  name: 'search-list',
+  name: 'base-search-list',
   props: {
     searches: {
       type: Array,
       default: function () {
         return []
       }
+    }
+  },
+  emits: ['selectItem', 'removeItem'],
+  methods: {
+    selectItem: function (item) {
+      this.$emit('selectItem', item)
+    },
+    removeItem: function (item) {
+      this.$emit('removeItem', item)
     }
   }
 }
