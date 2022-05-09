@@ -15,5 +15,5 @@ module.exports = {
   },
   productionSourceMap: false,
   // 生产环境中路径为 /ip:port/vue-music ，开发环境中路径为 /ip:port/
-  publicPath: process.env.NODE_ENV === 'production' ? '/vue-music' : '/'
+  publicPath: process.env.NODE_ENV === 'production' ? '/vue-music/' : '/'
 }

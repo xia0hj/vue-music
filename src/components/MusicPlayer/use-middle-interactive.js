@@ -19,14 +19,11 @@ export default function useMiddleInteractive () {
     touchRecord.startX = e.touches[0].pageX
     touchRecord.startY = e.touches[0].pageY
     touchRecord.moveDir = ''
-    console.log('start :', touchRecord)
   }
 
   function onMiddleTouchMove (e) {
     const deltaX = e.touches[0].pageX - touchRecord.startX
     const deltaY = e.touches[0].pageY - touchRecord.startY
-
-    console.log(touchRecord)
 
     // 如果本次移动方向是垂直，说明是在进行歌词上下滚动，则不切换页面
     if (!touchRecord.moveDir) {

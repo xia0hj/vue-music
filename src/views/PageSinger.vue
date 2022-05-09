@@ -31,7 +31,6 @@ export default {
   },
   created: async function () {
     const result = await getSingerList()
-    console.log('page singer get singerList data = ', result)
     this.$data.singers = result.singers
   },
   methods: {
