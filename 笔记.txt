@@ -116,3 +116,8 @@ MusicList：
 2.防抖，节流函数npm install throttle-debounce
 3. props不是响应式对象
 4. 上拉加载 npm install @better-scroll/pull-up --save
+
+2022/5/9
+
+1. npm install --save-dev xsrf
+2. npm install --save-dev cookie-parser
