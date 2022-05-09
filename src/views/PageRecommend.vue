@@ -73,8 +73,6 @@ export default {
     // 赋值给data
     this.$data.sliders = result.sliders
     this.$data.albums = result.albums
-    console.log('page recommend get sliders data = ', result.sliders)
-    console.log('page recommend get albums data = ', result.albums)
   },
   methods: {
     selectItem: function (album) {
