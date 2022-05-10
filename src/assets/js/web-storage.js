@@ -44,6 +44,24 @@ export function getValueArray (key) {
   return value
 }
 
+/**
+ * 根据key取value
+ * @param {string} key key
+ * @returns any
+ */
+export function getValue (key) {
+  return JSON.parse(window.localStorage.getItem(key))
+}
+
+/**
+ * 根据key覆盖value
+ * @param {*} key key
+ * @param {*} value value
+ */
+export function setValue (key, value) {
+  window.localStorage.setItem(key, JSON.stringify(value))
+}
+
 // 如果根据compare得知value已存在则无操作，不存在则插入到数据头部
 function compareAndUnshift (array, item, compare, maxLength) {
   const findIndex = array.findIndex(compare)

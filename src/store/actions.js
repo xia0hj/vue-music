@@ -101,6 +101,10 @@ export function addSong ({ commit, state }, song) {
   commit('setCurrentIndex', currentIndex)
   commit('setIsPlaying', true)
   commit('setIsFullScreen', true)
+
+  // setValue(SEQUENCE_LIST_KEY, sequenceList)
+  // setValue(PLAY_LIST_KEY, playList)
+  // setValue(CUR_PLAY_INDEX, currentIndex)
 }
 
 function findSongIndex (list, song) {
