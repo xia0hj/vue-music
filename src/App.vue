@@ -15,6 +15,7 @@
 import AppHeader from '@/components/AppHeader'
 import NavigationBar from '@/components/NavigationBar'
 import MusicPlayer from '@/components/MusicPlayer'
+import { SEQUENCE_LIST_KEY, PLAY_LIST_KEY } from '@/assets/js/constant'
 export default {
   components: {
     AppHeader,
@@ -29,6 +30,24 @@ export default {
         bottom
       }
     }
+  },
+  mounted () {
+    window.addEventListener('storage', (e) => {
+      switch (e.key) {
+        case SEQUENCE_LIST_KEY: {
+          this.$store.commit('setSequenceList', JSON.parse(e.newValue))
+          break
+        }
+        case PLAY_LIST_KEY: {
+          this.$store.commit('setPlayList', JSON.parse(e.newValue))
+          break
+        }
+        default: {
+          console.log(`监听到其他标签页修改了localStorage, key=${e.key}`)
+        }
+      }
+      // console.log('localStorage发生变化', e)
+    })
   }
 }
 </script>
