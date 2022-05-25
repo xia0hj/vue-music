@@ -44,6 +44,32 @@ export function getValueArray (key) {
   return value
 }
 
+/**
+ * 从 localStorage 获取对象或者字符串
+ * @param {string} key
+ * @returns {object|string}
+ */
+export function getValue (key) {
+  const getValue = window.localStorage.getItem(key)
+  try {
+    return JSON.parse(getValue)
+  } catch (e) {
+    return getValue
+  }
+}
+
+/**
+ * 将字符串或者对象保存到 localStorage
+ * @param {string} key
+ * @param {any} value
+ */
+export function setValue (key, value) {
+  if (typeof value === 'object') {
+    value = JSON.stringify(value)
+  }
+  window.localStorage.setItem(key, value)
+}
+
 // 如果根据compare得知value已存在则无操作，不存在则插入到数据头部
 function compareAndUnshift (array, item, compare, maxLength) {
   const findIndex = array.findIndex(compare)

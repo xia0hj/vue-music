@@ -45,3 +45,12 @@ export function formatTime (time) {
 export function limitBetween (curVal, minVal, maxVal) {
   return Math.min(maxVal, Math.max(minVal, curVal))
 }
+
+/**
+ * 获取一个随机 uid
+ * @returns {string}
+ */
+export function getUid () {
+  const t = (new Date()).getUTCMilliseconds()
+  return '' + Math.round(2147483647 * Math.random()) * t % 1e10
+}

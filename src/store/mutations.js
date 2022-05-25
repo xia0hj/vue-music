@@ -1,6 +1,15 @@
+import { setValue } from '@/assets/js/web-storage'
+import { STOP_KEY } from '@/assets/js/constant'
+import { getUid } from '@/assets/js/utils'
+
 const mutations = {
   setIsPlaying: function (state, isPlaying) {
     state.isPlaying = isPlaying
+    if (isPlaying === true) {
+      // 当前标签页开始播放，修改 localStorage 通知其他标签页停止播放
+      // 如果值相同不会触发事件，所以每次修改 localStorage 都要设 uid
+      setValue(STOP_KEY, getUid())
+    }
   },
   setSequenceList: function (state, list) {
     state.sequenceList = list
