@@ -1,5 +1,6 @@
-import { PLAY_MODE } from '@/assets/js/constant'
+import { PLAY_MODE, SYNC_LIST_KEY } from '@/assets/js/constant'
 import { shuffle } from '@/assets/js/utils'
+import { setValue } from '@/assets/js/web-storage'
 
 // 顺序播放
 export function sequentialPlay ({ commit }, { list, index }) {
@@ -9,16 +10,29 @@ export function sequentialPlay ({ commit }, { list, index }) {
   commit('setIsPlaying', true)
   commit('setIsFullScreen', true)
   commit('setCurrentIndex', index)
+
+  const syncData = {
+    sequenceList: list,
+    curSongIdxInSeqList: index
+  }
+  setValue(SYNC_LIST_KEY, syncData)
 }
 
 // 随机播放
-export function randomPlay ({ commit }, list) {
+export function randomPlay ({ commit, getters }, list) {
   commit('setPlayMode', PLAY_MODE.random)
   commit('setSequenceList', list)
   commit('setPlayList', shuffle(list))
   commit('setIsPlaying', true)
   commit('setIsFullScreen', true)
   commit('setCurrentIndex', 0)
+
+  const curSongIdxInSeqList = findSongIndex(list, getters.currentSong)
+  const syncData = {
+    sequenceList: list,
+    curSongIdxInSeqList
+  }
+  setValue(SYNC_LIST_KEY, syncData)
 }
 
 // 切换播放模式
@@ -101,6 +115,20 @@ export function addSong ({ commit, state }, song) {
   commit('setCurrentIndex', currentIndex)
   commit('setIsPlaying', true)
   commit('setIsFullScreen', true)
+}
+
+export function syncOtherList ({ commit, state }, { sequenceList, curSongIdxInSeqList }) {
+  if (state.playMode === PLAY_MODE.sequence || state.playMode === PLAY_MODE.loop) {
+    commit('setSequenceList', sequenceList)
+    commit('setPlayList', sequenceList)
+    commit('setCurrentIndex', curSongIdxInSeqList)
+  } else if (state.playMode === PLAY_MODE.random) {
+    commit('setSequenceList', sequenceList)
+    const randomList = shuffle(sequenceList)
+    const randomListIdx = findSongIndex(randomList, sequenceList[curSongIdxInSeqList])
+    commit('setPlayList', randomList)
+    commit('setCurrentIndex', randomListIdx)
+  }
 }
 
 function findSongIndex (list, song) {

@@ -5,6 +5,7 @@ export const TOP_KEY = '__top__' // 排行榜详情页的当前歌单key
 export const SEARCH_KEY = '__search__' // 搜索历史
 
 export const STOP_KEY = '__stop-other-playing__' // 通知其他标签页停止播放
+export const SYNC_LIST_KEY = '__sync-list-data__' // 多标签页同步播放列表
 
 export const PLAY_MODE = {
   sequence: 0, // 顺序播放

@@ -15,7 +15,7 @@
 import AppHeader from '@/components/AppHeader'
 import NavigationBar from '@/components/NavigationBar'
 import MusicPlayer from '@/components/MusicPlayer'
-import { STOP_KEY } from '@/assets/js/constant'
+import { STOP_KEY, SYNC_LIST_KEY } from '@/assets/js/constant'
 
 export default {
   components: {
@@ -43,8 +43,14 @@ export default {
     localStorageCallback (e) {
       switch (e.key) {
         case STOP_KEY: {
-          this.$store.commit('setIsPlaying', false)
           console.log(`监听到其他标签页修改了localStorage. key=${e.key}`)
+          this.$store.commit('setIsPlaying', false)
+          break
+        }
+        case SYNC_LIST_KEY: {
+          console.log(`监听到其他标签页修改了localStorage. key=${e.key}`)
+          this.$store.dispatch('clearSongList')
+          this.$store.dispatch('syncOtherList', JSON.parse(e.newValue))
           break
         }
         default: {
