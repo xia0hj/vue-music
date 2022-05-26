@@ -7,7 +7,7 @@
         <!-- recommend页面的轮播图 -->
         <div class="slider-wrapper">
           <div class="slider-content">
-            <BaseSlider :sliders="sliders" v-if="sliders.length"/>
+            <SimpleCarousel :images="sliders" v-if="sliders.length" :autoPlayInterval="2000"/>
           </div>
         </div>
 
@@ -45,6 +45,7 @@
 <script>
 import { getRecommend } from '@/service/recommend.js'
 import BaseSlider from '@/components/BaseSlider'
+import SimpleCarousel from '@/components/simple-carousel'
 import BaseScroll from '@/components/WrappedScroll'
 import { ALBUM_KEY } from '@/assets/js/constant'
 
@@ -52,7 +53,8 @@ export default {
   name: 'PageRecommend',
   components: {
     BaseSlider,
-    BaseScroll
+    BaseScroll,
+    SimpleCarousel
   },
   data: function () {
     return {
