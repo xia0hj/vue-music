@@ -45,7 +45,6 @@ export default function useLyric (isSongReady, currentTime) {
     }
 
     lyricParser.value = new Lyric(lyric, handleLyric)
-    console.log('LyricParser: ', lyricParser.value)
 
     // 有歌词
     if (lyricParser.value.lines.length) {

@@ -33,7 +33,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this._uid)
     window.addEventListener('storage', this.localStorageCallback)
   },
   unmounted () {
@@ -44,11 +43,10 @@ export default {
       switch (e.key) {
         case STOP_KEY: {
           this.$store.commit('setIsPlaying', false)
-          console.log(`监听到其他标签页修改了localStorage. key=${e.key}`)
+          console.log('监听到其他标签页开始播放，本标签页暂停播放')
           break
         }
         default: {
-          console.log(`监听到其他标签页修改了localStorage. key=${e.key}`)
           break
         }
       }
