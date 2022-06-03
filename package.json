@@ -32,6 +32,7 @@
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
+    "compression-webpack-plugin": "^5.0.1",
     "cookie-parser": "^1.4.6",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
