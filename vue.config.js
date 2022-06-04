@@ -24,12 +24,12 @@ module.exports = {
     }))
 
     // 以下插件由 CDN 引入
-    config.externals = {
-      vue: 'Vue',
-      'vue-router': 'VueRouter',
-      vuex: 'Vuex',
-      axios: 'axios'
-    }
+    // config.externals = {
+    //   vue: 'Vue',
+    //   'vue-router': 'VueRouter',
+    //   vuex: 'Vuex',
+    //   axios: 'axios'
+    // }
   },
   productionSourceMap: false,
   // 生产环境中路径为 /ip:port/vue-music ，开发环境中路径为 /ip:port/
