@@ -24,11 +24,13 @@ module.exports = {
     }))
 
     // 以下插件由 CDN 引入
-    config.externals = {
-      vue: 'Vue',
-      'vue-router': 'VueRouter', // 相当于 import VueRouter from 'vue-router'
-      vuex: 'Vuex',
-      axios: 'axios'
+    if (process.env.NODE_ENV === 'producetion') {
+      config.externals = {
+        vue: 'Vue',
+        'vue-router': 'VueRouter', // 相当于 import VueRouter from 'vue-router'
+        vuex: 'Vuex',
+        axios: 'axios'
+      }
     }
   },
   productionSourceMap: false,

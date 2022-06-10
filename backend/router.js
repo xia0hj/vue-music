@@ -35,7 +35,7 @@ const getRandomValue = (prefix = '') => {
 }
 
 // 获取一个随机 uid
-function getUid () {
+function getUid() {
   const t = (new Date()).getUTCMilliseconds()
   return '' + Math.round(2147483647 * Math.random()) * t % 1e10
 }
@@ -137,15 +137,13 @@ const registerRecommend = (app) => {
         // 往前端发送一个标准格式的响应数据，包括成功错误码和数据
         // 注意这个是app的response，之前搞错写成axios的response了
         // 延迟发送数据，测试loading
-        setTimeout(() => {
-          appResponse.json({
-            code: CODE_OK,
-            result: {
-              sliders,
-              albums
-            }
-          })
-        }, 1000)
+        appResponse.json({
+          code: CODE_OK,
+          result: {
+            sliders,
+            albums
+          }
+        })
       } else {
         appResponse.json(data)
       }
@@ -332,7 +330,7 @@ const mergeSinger = (singer) => {
 
 // 注册歌曲 url 获取接口路由
 // 因为歌曲的 url 每天都在变化，所以需要单独的接口根据歌曲的 mid 获取
-function registerSongsUrl (app) {
+function registerSongsUrl(app) {
   app.get('/api/getSongsUrl', (req, res) => {
     const mid = req.query.mid
 
@@ -351,7 +349,7 @@ function registerSongsUrl (app) {
     const urlMap = {}
 
     // 处理返回的 mid
-    function process (mid) {
+    function process(mid) {
       const data = {
         req_0: {
           module: 'vkey.GetVkeyServer',
@@ -411,7 +409,7 @@ function registerSongsUrl (app) {
 }
 
 // 注册歌词接口
-function registerLyric (app) {
+function registerLyric(app) {
   app.get('/api/getLyric', (appRequest, appResponse) => {
     const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
 
@@ -437,7 +435,7 @@ function registerLyric (app) {
 }
 
 // 注册歌单专辑接口
-function registerAlbum (app) {
+function registerAlbum(app) {
   app.get('/api/getAlbum', (appRequest, appResponse) => {
     const data = {
       req_0: {
@@ -482,7 +480,7 @@ function registerAlbum (app) {
 }
 
 // 注册排行榜接口
-function registerTopList (app) {
+function registerTopList(app) {
   app.get('/api/getTopList', (appRequest, appResponse) => {
     const url = 'https://u.y.qq.com/cgi-bin/musics.fcg'
 
@@ -536,7 +534,7 @@ function registerTopList (app) {
 }
 
 // 注册排行榜详情接口
-function registerTopDetail (app) {
+function registerTopDetail(app) {
   app.get('/api/getTopDetail', (appRequest, appResponse) => {
     const url = 'https://u.y.qq.com/cgi-bin/musics.fcg'
     const { id, period } = appRequest.query
@@ -585,7 +583,7 @@ function registerTopDetail (app) {
 }
 
 // 注册热门搜索接口
-function registerHotKeys (app) {
+function registerHotKeys(app) {
   app.get('/api/getHotKeys', (appRequest, appResponse) => {
     const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
 
@@ -613,7 +611,7 @@ function registerHotKeys (app) {
 }
 
 // 注册搜索查询接口
-function registerSearch (app) {
+function registerSearch(app) {
   app.get('/api/search', (appRequest, appResponse) => {
     // const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
     const url = 'https://shc.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
